@@ -2627,24 +2627,24 @@ class ContratosController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:AG1');
+            ->mergeCells('A1:AH1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:AG1');
+            ->mergeCells('A1:AH1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1','Reporte Contratos - Fecha '.date('d-m-Y')); // Titulo del reporte
 
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:AF1')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:AH1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A2:AG2')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:AH2')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -2873,17 +2873,18 @@ class ContratosController extends Controller
                 ->setCellValue($letras[19].$i, $contrato->grupo_corte('true'))
                 ->setCellValue($letras[20].$i, $contrato->facturacion())
                 ->setCellValue($letras[21].$i, $contrato->costo_reconexion)
-                ->setCellValue($letras[22].$i, ucfirst($contrato->tipo_contrato))
-                ->setCellValue($letras[23].$i, $contrato->iva_factura == null || $contrato->iva_factura == 0 ? 'No' : 'Si')
-                ->setCellValue($letras[24].$i, $contrato->descuento != null ? $contrato->descuento . '%' : '0%' )
-                ->setCellValue($letras[25].$i, isset($plan->nombre) ? $plan->nombre : '')
-                ->setCellValue($letras[26].$i, isset($plan->precio) ? $plan->precio : '')
-                ->setCellValue($letras[27].$i, isset($servicio->nombre) && $servicio->nombre != "" ? $servicio->nombre . " - $" . number_format($servicio->precio, 0, ',', '.') : '' )
-                ->setCellValue($letras[28].$i, isset($servicio_otro->nombre) && $servicio_otro->nombre != "" ? $servicio_otro->nombre . " - $" . number_format($servicio_otro->precio, 0, ',', '.') : '' )
-                ->setCellValue($letras[29].$i, round($contrato->deudaFacturas()))
-                ->setCellValue($letras[30].$i, round($sumaPlanes))
-                ->setCellValue($letras[31].$i, $contrato->c_etiqueta)
-                ->setCellValue($letras[32].$i, $contrato->fechaDesconexion())
+                ->setCellValue($letras[22].$i, $contrato->c_nombre_municipio)
+                ->setCellValue($letras[23].$i, ucfirst($contrato->tipo_contrato))
+                ->setCellValue($letras[24].$i, $contrato->iva_factura == null || $contrato->iva_factura == 0 ? 'No' : 'Si')
+                ->setCellValue($letras[25].$i, $contrato->descuento != null ? $contrato->descuento . '%' : '0%' )
+                ->setCellValue($letras[26].$i, isset($plan->nombre) ? $plan->nombre : '')
+                ->setCellValue($letras[27].$i, isset($plan->precio) ? $plan->precio : '')
+                ->setCellValue($letras[28].$i, isset($servicio->nombre) && $servicio->nombre != "" ? $servicio->nombre . " - $" . number_format($servicio->precio, 0, ',', '.') : '' )
+                ->setCellValue($letras[29].$i, isset($servicio_otro->nombre) && $servicio_otro->nombre != "" ? $servicio_otro->nombre . " - $" . number_format($servicio_otro->precio, 0, ',', '.') : '' )
+                ->setCellValue($letras[30].$i, round($contrato->deudaFacturas()))
+                ->setCellValue($letras[31].$i, round($sumaPlanes))
+                ->setCellValue($letras[32].$i, $contrato->c_etiqueta)
+                ->setCellValue($letras[33].$i, $contrato->fechaDesconexion())
                 ;
             $i++;
         }
@@ -2900,7 +2901,7 @@ class ContratosController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AF'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:AH'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
