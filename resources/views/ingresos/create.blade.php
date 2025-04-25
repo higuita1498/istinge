@@ -590,28 +590,37 @@
       }
 
       $("#submitcheck").click(function (e) {
-            e.preventDefault();
+        e.preventDefault();
 
-            var btn = document.getElementById('button-guardar');
-            var preloader = $("#preloader");
+        var form = $("#submitcheck").closest('form')[0];
 
-            // Mostrar el preloader
-            preloader.show();
+        // Validar si el formulario es válido
+        if (!form.checkValidity()) {
+            form.reportValidity(); // Esto mostrará los mensajes nativos de error
+            return; // No continúa si hay errores
+        }
 
-            // Deshabilitar el botón para evitar más clics
-            setTimeout(function () {
-                btn.setAttribute('disabled', 'disabled');
-            }, 1);
+        var btn = document.getElementById('button-guardar');
+        var preloader = $("#preloader");
 
-            // Rehabilitar el botón y ocultar el preloader después de 15 segundos
-            setTimeout(function () {
-                btn.removeAttribute('disabled');
-                preloader.hide();
-            }, 45000);
+        // Mostrar el preloader
+        preloader.show();
 
-            // Enviar el formulario
-            $("#submitcheck").closest('form').submit();
-        });
+        // Deshabilitar el botón para evitar más clics
+        setTimeout(function () {
+            btn.setAttribute('disabled', 'disabled');
+        }, 1);
+
+        // Rehabilitar el botón y ocultar el preloader después de 45 segundos
+        setTimeout(function () {
+            btn.removeAttribute('disabled');
+            preloader.hide();
+        }, 45000);
+
+        // Enviar el formulario
+        form.submit();
+    });
+
   })
 </script>
 @endsection
