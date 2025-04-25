@@ -310,13 +310,14 @@
             </div>
         </div>
     </div>
+
     <div style="margin-bottom:20px !important;margin-top: 3% !important;">
         <h4>DETALLES DE EQUIPOS (instalación – retiro)</h4>
         <table class="tabla-manual">
             <thead>
                 <tr>
                     <th>MARCA</th>
-                    <th>MARCA O MODELO TV</th>
+                    <th>MODELO TV</th>
                     <th>SERIAL</th>
                     <th>MAC</th>
                     <th>SEÑAL O POTENCIA</th>
@@ -325,48 +326,16 @@
                 </tr>
             </thead>
             <tbody>
-                <tr style="padding:25px;">
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                </tr>
-                <tr style="padding:25px;">
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                </tr>
-                <tr>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                </tr>
-                <tr>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                </tr>
-                <tr>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                </tr>
-
-                <!-- Puedes agregar más filas según sea necesario -->
+               @foreach($detalle_equipos as $detalle)
+               <tr>
+                   <td>{{ $detalle->marca }}</td>
+                    <td>{{ $detalle->modelo_tv }}</td>
+                    <td>{{ $detalle->serial }}</td>
+                    <td>{{ $detalle->mac }}</td>
+                    <td>{{ $detalle->senal_potencia }}</td>
+                    <td>{{ $detalle->cantidad_puntos }}</td>
+               </tr>
+               @endforeach
             </tbody>
         </table>
 

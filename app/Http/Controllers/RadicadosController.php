@@ -372,6 +372,22 @@ class RadicadosController extends Controller
         $radicado->barrio = $request->barrio;
         $radicado->save();
 
+        if(isset($request->marca)){
+             //Guardando el posible detalle existente de detalle de equipos.
+            for ($i=0; $i < count($request->marca); $i++) {
+                DB::table('radicados_detalles_equipos')->insert([
+                    'marca' => $request->marca[$i] ?? null,
+                    'modelo_tv' => $request->modelo_tv[$i] ?? null,
+                    'serial' => $request->serial[$i] ?? null,
+                    'mac' => $request->mac[$i] ?? null,
+                    'senal_potencia' => $request->senal_potencia[$i] ?? null,
+                    'cantidad_puntos' => $request->cantidad_puntos[$i] ?? null,
+                    'radicado_id' => $radicado->id,
+                    'created_at' => Carbon::now(),
+                ]);
+            }
+        }
+
         if ($request->contrato) {
             $movimiento = new MovimientoLOG;
             $movimiento->contrato    = $request->contrato;
@@ -399,9 +415,10 @@ class RadicadosController extends Controller
         $servicios = Servicio::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa', Auth::user()->empresa)->where('rol', 4)->get();
         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $detalle_equipos = DB::table('radicados_detalles_equipos')->where('radicado_id', $radicado->id)->get();
         if ($radicado) {
             view()->share(['icon' => 'far fa-life-ring', 'title' => 'Modificar: N° ' . $radicado->codigo, 'middel' => true]);
-            return view('radicados.edit')->with(compact('radicado', 'servicios', 'tecnicos', 'oficinas'));
+            return view('radicados.edit')->with(compact('radicado', 'servicios', 'tecnicos', 'oficinas','detalle_equipos'));
         }
         return redirect('empresa/radicados')->with('success', 'No existe un registro con ese id');
     }
@@ -410,6 +427,27 @@ class RadicadosController extends Controller
     {
 
         $radicado = Radicado::where('empresa', Auth::user()->empresa)->where('id', $id)->first();
+
+
+        //elminacion de un posible detalle de detalle de euqipos
+        DB::table('radicados_detalles_equipos')->where('radicado_id', $radicado->id)->delete();
+        if(isset($request->marca)){
+            //Guardando el posible detalle existente de detalle de equipos.
+           for ($i=0; $i < count($request->marca); $i++) {
+               DB::table('radicados_detalles_equipos')->insert([
+                   'marca' => $request->marca[$i] ?? null,
+                   'modelo_tv' => $request->modelo_tv[$i] ?? null,
+                   'serial' => $request->serial[$i] ?? null,
+                   'mac' => $request->mac[$i] ?? null,
+                   'senal_potencia' => $request->senal_potencia[$i] ?? null,
+                   'cantidad_puntos' => $request->cantidad_puntos[$i] ?? null,
+                   'radicado_id' => $radicado->id,
+                   'created_at' => Carbon::now(),
+               ]);
+           }
+       }
+
+
         if ($radicado) {
             if ($request->adjunto) {
                 $radicado->adjunto = $request->adjunto;
@@ -735,10 +773,10 @@ class RadicadosController extends Controller
     {
         $radicado = Radicado::where('empresa', Auth::user()->empresa)->where('id', $id)->first();
         $contrato = Contrato::where('empresa', Auth::user()->empresa)->where('id', $radicado->contrato)->first();
-
+        $detalle_equipos = DB::table('radicados_detalles_equipos')->where('radicado_id', $radicado->id)->get();
         if ($radicado) {
             view()->share(['title' => 'Caso Radicado N° ' . $radicado->codigo]);
-            $pdf = PDF::loadView('pdf.radicados', compact('radicado', 'contrato'));
+            $pdf = PDF::loadView('pdf.radicados', compact('radicado', 'contrato','detalle_equipos'));
             return  response($pdf->stream())->withHeaders(['Content-Type' => 'application/pdf',]);
         }
     }
