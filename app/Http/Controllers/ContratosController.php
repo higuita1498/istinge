@@ -1421,7 +1421,7 @@ class ContratosController extends Controller
         ]);
 
         //>>>>Posible aplicación de Prorrateo al total<<<<//
-        $dias = $factura->diasCobradosProrrateo();
+        $dias = $factura->diasCobradosProrrateo(1); //forzamos el prorrateo asi laopcion de empresa este off
         //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
         if($dias != 30){
 

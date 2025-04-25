@@ -1399,7 +1399,7 @@ public function forma_pago()
         }
     }
 
-    public function diasCobradosProrrateo(){
+    public function diasCobradosProrrateo($forzar_prorrateo = null){
 
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
         where('contracts.id',$this->contrato_id)
@@ -1514,7 +1514,8 @@ public function forma_pago()
             también debemos tener la opción de prorrateo activa en el menú de configuración.
             */
 
-            if($factura->id == $this->id && $empresa->prorrateo == 1){
+            if($factura->id == $this->id && $empresa->prorrateo == 1 ||
+                $factura->id == $this->id && $forzar_prorrateo == 1){
 
                 //Buscamos el contrato al que esta asociada la factura
                 $contrato = Contrato::find($this->contrato_id);
