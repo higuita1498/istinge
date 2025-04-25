@@ -395,6 +395,12 @@
 									<td>{{ $contrato->factura_individual == 1 ?'Si':'No' }}</td>
 								</tr>
 								@endif
+                                @if($contrato->fechaDesconexion() != null)
+                                <tr>
+                                    <th>Fecha desconexión contrato</th>
+                                    <td>{{$contrato->fechaDesconexion()}}</td>
+                                </tr>
+                                @endif
 								<tr>
 									<th>Acciones</th>
 									<td>

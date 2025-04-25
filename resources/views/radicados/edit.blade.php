@@ -140,11 +140,11 @@
     <div class="col-md-3 form-group">
         <label class="control-label">Grado de satifacción </span></label>
         <select class="form-control selectpicker" name="grado" id="prioridad" required="" title="Seleccione">
-            <option value="USUARIOS_NS_MUY_INSATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_MUY_INSATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_MUY_INSATISFECHO</option>
-            <option value="USUARIOS_NS_INSATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_INSATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_INSATISFECHO</option>
-            <option value="USUAR_NS_NI_INSATISF_NI_SATISF" {{ old('medio', $radicado->medio) == 'USUAR_NS_NI_INSATISF_NI_SATISF' ? 'selected' : '' }}>USUAR_NS_NI_INSATISF_NI_SATISF</option>
-            <option value="USUARIOS_NS_SATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_SATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_SATISFECHO</option>
-            <option value="USUARIOS_NS_MUY_SATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_MUY_SATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_MUY_SATISFECHO</option>
+            <option value="USUARIOS_NS_MUY_INSATISFECHO" {{ old('medio', $radicado->grado) == 'USUARIOS_NS_MUY_INSATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_MUY_INSATISFECHO</option>
+            <option value="USUARIOS_NS_INSATISFECHO" {{ old('medio', $radicado->grado) == 'USUARIOS_NS_INSATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_INSATISFECHO</option>
+            <option value="USUAR_NS_NI_INSATISF_NI_SATISF" {{ old('medio', $radicado->grado) == 'USUAR_NS_NI_INSATISF_NI_SATISF' ? 'selected' : '' }}>USUAR_NS_NI_INSATISF_NI_SATISF</option>
+            <option value="USUARIOS_NS_SATISFECHO" {{ old('medio', $radicado->grado) == 'USUARIOS_NS_SATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_SATISFECHO</option>
+            <option value="USUARIOS_NS_MUY_SATISFECHO" {{ old('medio', $radicado->grado) == 'USUARIOS_NS_MUY_SATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_MUY_SATISFECHO</option>
 
         </select>
         <span class="help-block error">
@@ -154,9 +154,9 @@
     <div class="col-md-3 form-group">
                 <label class="control-label">Revisión </span></label>
                 <select class="form-control selectpicker" name="revision" id="revision" required="" title="Seleccione">
-                    <option value="Pendiente">Pendiente	</option>
-                    <option value="Rechazado">Rechazado</option>
-                    <option value="Aprobado">Aprobado</option>
+                    <option value="Pendiente" {{ $radicado->revision == "Pendiente" ? 'selected': '' }}>Pendiente	</option>
+                    <option value="Rechazado" {{ $radicado->revision == "Rechazado" ? 'selected': '' }}>Rechazado</option>
+                    <option value="Aprobado" {{ $radicado->revision == "Aprobado" ? 'selected': '' }}>Aprobado</option>
                 </select>
                 <span class="help-block error">
                     <strong>{{ $errors->first('prevision') }}</strong>
@@ -181,6 +181,45 @@
         <strong>{{ $errors->first('desconocido') }}</strong>
       </span>
     </div>
+
+    <div class="col-md-12" style="margin-top: 2%;">
+        <div class="fact-table">
+
+            <h4 class="card-title body-oscuro">Detalles del Equipo</h4>
+            <table class="table table-sm table-striped" id="table-form-radicado" width="100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th width="27%">Marca</th>
+                        <th width="28%">Modelo Tv</th>
+                        <th width="15%">Serial</th>
+                        <th width="15%">Mac</th>
+                        <th width="15%">Señal / Potencia</th>
+                        <th width="15%">Cant. Puntos</th>
+                        <th width="5%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($detalle_equipos as $detalle)
+                    <tr>
+                        <td><input type="text" name="marca[]" class="form-control form-control-sm" value="{{ $detalle->marca }}" placeholder="Marca"></td>
+                        <td><input type="text" name="modelo_tv[]" class="form-control form-control-sm" value="{{ $detalle->modelo_tv }}" placeholder="Modelo Tv"></td>
+                        <td><input type="text" name="serial[]" class="form-control form-control-sm" value="{{ $detalle->serial }}" placeholder="Serial"></td>
+                        <td><input type="text" name="mac[]" class="form-control form-control-sm" value="{{ $detalle->mac }}" placeholder="Mac"></td>
+                        <td><input type="text" name="senal_potencia[]" class="form-control form-control-sm" value="{{ $detalle->senal_potencia }}" placeholder="Señal o Potencia"></td>
+                        <td><input type="text" name="cantidad_puntos[]" class="form-control form-control-sm" value="{{ $detalle->cantidad_puntos }}" placeholder="Cantidad Puntos"></td>
+                        <td><button type="button" onclick="Eliminar(${nro});" class="btn btn-outline-danger btn-icons" style="color:#E13130">X</button></td>
+                    </tr>
+                    @endforeach
+                </tbody>
+
+            </table>
+            <button class="btn btn-outline-primary" onclick="createRowRadicado();" type="button">Asociar
+                Persona</button>
+                {{-- <a><i data-tippy-content="En caso de ser una empresa, personas pertenecientes"
+                    class="icono far fa-question-circle"></a></i> --}}
+        </div>
+    </div>
+
   </div>
   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   <hr>
@@ -195,6 +234,57 @@
 
 @section('scripts')
   <script>
+    /* Remueve los tr de una tabla */
+function Eliminar(i) {
+    $("#" + i).remove();
+    totalall();
+    if ($('#table-form').length > 0 && $('#totalesreten').length == 0) {
+        totalall();
+    }
+
+    if ($('#tipo_operacion').val() == 3) {
+        $('#nuevaColumna').css('display', 'block');
+    }
+
+}
+
+function createRowRadicado() {
+    var nro = $('#table-form-radicado tbody tr').length + 1;
+    if ($('#' + nro).length > 0) {
+        for (i = 1; i <= nro; i++) {
+            if ($('#' + i).length == 0) {
+                nro = i;
+                break;
+            }
+        }
+    }
+    $('#table-form-radicado tbody').append(
+        `<tr  id="${nro}">` +
+        `<td>
+        <input type="text" name="marca[]"  id="nombre${nro}" class="form-control form-control-sm" required="" placeholder="Marca" maxlength="200">
+        </td>
+        <td>
+        <input type="text" name="modelo_tv[]" id="email${nro}" class="form-control form-control-sm"  placeholder="Modelo Tv" maxlength="200">
+        </td>
+        <td>
+        <input type="text" name="serial[]" id="telefono${nro}" class="form-control form-control-sm" required="" placeholder="Serial">
+        </td>
+        <td>
+        <input type="text" name="mac[]" id="celular${nro}" class="form-control form-control-sm" placeholder="Mac">
+        </td>
+        <td>
+        <input type="text" name="senal_potencia[]" id="celular${nro}" class="form-control form-control-sm" placeholder="Senal ó Potencia">
+        </td>
+        <td>
+        <input type="text" name="cantidad_puntos[]" id="celular${nro}" class="form-control form-control-sm" placeholder="Cantidad Puntos">
+        </td>
+        <td><button type="button" onclick="Eliminar(${nro});" class="btn btn-outline-danger btn-icons" style="color:#E13130">X</button></td>
+        ` +
+        `</tr>`
+    );
+    $("#form-radicado").validate({ language: 'es' });
+}
+
     function searchDV(id){
       option = id;
       if (option == 2) {

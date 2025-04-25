@@ -243,7 +243,7 @@ class ContratosController extends Controller
             if($request->plan_tv){
 
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contracts.servicio_tv', $request->plan_tv);
+                    $query->orWhereIn('contracts.servicio_tv', $request->plan_tv);
                 });
             }
             if($request->ap){
@@ -1871,7 +1871,6 @@ class ContratosController extends Controller
                     $contrato->descuento               = $request->descuento;
                     $contrato->vendedor                = $request->vendedor;
                     $contrato->canal                   = $request->canal;
-                    $contrato->nro                     = $request->nro;
                     $contrato->address_street          = $request->address_street;
                     $contrato->tecnologia              = $request->tecnologia;
                     $contrato->tipo_contrato           = $request->tipo_contrato;
@@ -1885,6 +1884,18 @@ class ContratosController extends Controller
                     $contrato->serial_moden            = $request->serial_moden;
                     $contrato->descuento_pesos         = $request->descuento_pesos;
                     $contrato->fact_primer_mes         = $request->fact_primer_mes;
+
+                    //Validacion para cambiar todas las facturas_contratos de nro al nuevo ingresado
+                    if($request->nro != $contrato->nro){
+
+                        $factura_contratos = DB::table('facturas_contratos')->where('contrato_nro', $contrato->nro)->get();
+                        foreach($factura_contratos as $factura_contrato){
+                            DB::table('facturas_contratos')->where('id', $factura_contrato->id)->update([
+                                'contrato_nro' => $request->nro
+                            ]);
+                        }
+                        $contrato->nro                 = $request->nro;
+                    }
 
                     if($request->rd_item_vencimiento){
                         $contrato->dt_item_hasta           = $request->dt_item_hasta;
@@ -2573,6 +2584,8 @@ class ContratosController extends Controller
             'Cliente',
             'Identificacion',
             'Celular',
+            'Telefono1',
+            'Telefono2',
             'Correo Electronico',
             'Direccion',
             'Barrio',
@@ -2599,39 +2612,39 @@ class ContratosController extends Controller
             'Otros Items',
             'Deuda Facturas',
             'Pagar / Mes',
-            'Etiqueta'
+            'Etiqueta',
+            'Fecha Desconexion'
         );
 
-        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','AA','AB','AC','AD','AE');
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','AA','AB','AC','AD','AE','AF','AG','AH');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific�1�7�1�7�1�7
-        ->setTitle("Reporte Excel Contactos") // Titulo
-        ->setSubject("Reporte Excel Contactos") //Asunto
-        ->setDescription("Reporte de Contactos") //Descripci�1�7�1�7�1�7n
-        ->setKeywords("reporte Contactos") //Etiquetas
+        ->setTitle("Reporte Excel Contratos") // Titulo
+        ->setSubject("Reporte Excel Contratos") //Asunto
+        ->setDescription("Reporte de Contratos") //Descripci�1�7�1�7�1�7n
+        ->setKeywords("reporte Contratos") //Etiquetas
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:AE1');
+            ->mergeCells('A1:AH1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:AE2');
+            ->mergeCells('A1:AH1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
+            ->setCellValue('A1','Reporte Contratos - Fecha '.date('d-m-Y')); // Titulo del reporte
 
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:AE3')->applyFromArray($estilo);
-
+        $objPHPExcel->getActiveSheet()->getStyle('A1:AH1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AE3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:AH2')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -2650,13 +2663,13 @@ class ContratosController extends Controller
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
             )
         );
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AE3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:AH2')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'2', utf8_decode($titulosColumnas[$i]));
         }
 
-        $i=4;
+        $i=3;
         $letra=0;
 
         $contratos = Contrato::query()
@@ -2668,6 +2681,8 @@ class ContratosController extends Controller
                 'contactos.apellido2 as c_apellido2',
                 'contactos.nit as c_nit',
                 'contactos.celular as c_celular',
+                'contactos.telefono1 as c_telefono1',
+                'contactos.telefono2 as c_telefono2',
                 'contactos.email as c_email',
                 'contactos.barrio as c_barrio',
                 'contactos.vereda as c_vereda',
@@ -2684,7 +2699,6 @@ class ContratosController extends Controller
             ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id')
             ->where('contracts.empresa', Auth::user()->empresa)
             ->where('contracts.status', '!=', 0)
-            ->where('contracts.state','!=','disabled')
             ->orderBy('nro', 'desc')
             ;
 
@@ -2717,7 +2731,7 @@ class ContratosController extends Controller
         if($request->state != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.state', $request->state)
-                ->whereIn('contracts.status', [0,1]);
+                ->whereIn('contracts.status', [1]);
             });
         }
         if($request->conexion_s != null){
@@ -2841,40 +2855,44 @@ class ContratosController extends Controller
                 ->setCellValue($letras[1].$i, $contrato->c_nombre.' '.$contrato->c_apellido1.' '.$contrato->c_apellido2)
                 ->setCellValue($letras[2].$i, $contrato->c_nit)
                 ->setCellValue($letras[3].$i, $contrato->c_celular)
-                ->setCellValue($letras[4].$i, $contrato->c_email)
-                ->setCellValue($letras[5].$i, $contrato->c_direccion)
-                ->setCellValue($letras[6].$i, $contrato->nombre_barrio)
-                ->setCellValue($letras[7].$i, $contrato->c_vereda)
-                ->setCellValue($letras[8].$i, $contrato->c_estrato)
-                ->setCellValue($letras[9].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
-                ->setCellValue($letras[10].$i, ($contrato->plan_id) ? $contrato->plan()->name : '')
-                ->setCellValue($letras[11].$i, ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : '')
-                ->setCellValue($letras[12].$i, $contrato->ip)
-                ->setCellValue($letras[13].$i, $contrato->mac_address)
-                ->setCellValue($letras[14].$i, $contrato->interfaz)
-                ->setCellValue($letras[15].$i, $contrato->serial_onu)
-                ->setCellValue($letras[16].$i, $contrato->status())
-                ->setCellValue($letras[17].$i, $contrato->grupo_corte('true'))
-                ->setCellValue($letras[18].$i, $contrato->facturacion())
-                ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
-                ->setCellValue($letras[21].$i, ucfirst($contrato->tipo_contrato))
-                ->setCellValue($letras[22].$i, $contrato->iva_factura == null || $contrato->iva_factura == 0 ? 'No' : 'Si')
-                ->setCellValue($letras[23].$i, $contrato->descuento != null ? $contrato->descuento . '%' : '0%' )
-                ->setCellValue($letras[24].$i, isset($plan->nombre) ? $plan->nombre : '')
-                ->setCellValue($letras[25].$i, isset($plan->precio) ? $plan->precio : '')
-                ->setCellValue($letras[26].$i, isset($servicio->nombre) && $servicio->nombre != "" ? $servicio->nombre . " - $" . number_format($servicio->precio, 0, ',', '.') : '' )
-                ->setCellValue($letras[27].$i, isset($servicio_otro->nombre) && $servicio_otro->nombre != "" ? $servicio_otro->nombre . " - $" . number_format($servicio_otro->precio, 0, ',', '.') : '' )
-                ->setCellValue($letras[28].$i, round($contrato->deudaFacturas()))
-                ->setCellValue($letras[29].$i, round($sumaPlanes))
-                ->setCellValue($letras[30].$i, $contrato->c_etiqueta)
+                ->setCellValue($letras[4].$i, $contrato->c_telefono1)
+                ->setCellValue($letras[5].$i, $contrato->c_telefono2)
+                ->setCellValue($letras[6].$i, $contrato->c_email)
+                ->setCellValue($letras[7].$i, $contrato->c_direccion)
+                ->setCellValue($letras[8].$i, $contrato->nombre_barrio)
+                ->setCellValue($letras[9].$i, $contrato->c_vereda)
+                ->setCellValue($letras[10].$i, $contrato->c_estrato)
+                ->setCellValue($letras[11].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
+                ->setCellValue($letras[12].$i, ($contrato->plan_id) ? $contrato->plan()->name : '')
+                ->setCellValue($letras[13].$i, ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : '')
+                ->setCellValue($letras[14].$i, $contrato->ip)
+                ->setCellValue($letras[15].$i, $contrato->mac_address)
+                ->setCellValue($letras[16].$i, $contrato->interfaz)
+                ->setCellValue($letras[17].$i, $contrato->serial_onu)
+                ->setCellValue($letras[18].$i, $contrato->status())
+                ->setCellValue($letras[19].$i, $contrato->grupo_corte('true'))
+                ->setCellValue($letras[20].$i, $contrato->facturacion())
+                ->setCellValue($letras[21].$i, $contrato->costo_reconexion)
+                ->setCellValue($letras[22].$i, $contrato->c_nombre_municipio)
+                ->setCellValue($letras[23].$i, ucfirst($contrato->tipo_contrato))
+                ->setCellValue($letras[24].$i, $contrato->iva_factura == null || $contrato->iva_factura == 0 ? 'No' : 'Si')
+                ->setCellValue($letras[25].$i, $contrato->descuento != null ? $contrato->descuento . '%' : '0%' )
+                ->setCellValue($letras[26].$i, isset($plan->nombre) ? $plan->nombre : '')
+                ->setCellValue($letras[27].$i, isset($plan->precio) ? $plan->precio : '')
+                ->setCellValue($letras[28].$i, isset($servicio->nombre) && $servicio->nombre != "" ? $servicio->nombre . " - $" . number_format($servicio->precio, 0, ',', '.') : '' )
+                ->setCellValue($letras[29].$i, isset($servicio_otro->nombre) && $servicio_otro->nombre != "" ? $servicio_otro->nombre . " - $" . number_format($servicio_otro->precio, 0, ',', '.') : '' )
+                ->setCellValue($letras[30].$i, round($contrato->deudaFacturas()))
+                ->setCellValue($letras[31].$i, round($sumaPlanes))
+                ->setCellValue($letras[32].$i, $contrato->c_etiqueta)
+                ->setCellValue($letras[33].$i, $contrato->fechaDesconexion())
                 ;
             $i++;
         }
 
         $objPHPExcel->setActiveSheetIndex(0)
-        ->setCellValue($letras[25].$i, $totalPlan)
-        ->setCellValue($letras[26].$i, $totalServicio)
-        ->setCellValue($letras[27].$i, $totalServicioOtro)
+        ->setCellValue($letras[26].$i, $totalPlan)
+        ->setCellValue($letras[27].$i, $totalServicio)
+        ->setCellValue($letras[28].$i, $totalServicioOtro)
         ;
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
@@ -2883,7 +2901,7 @@ class ContratosController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AE'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:AH'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);

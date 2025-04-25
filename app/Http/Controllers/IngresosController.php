@@ -330,6 +330,16 @@ class IngresosController extends Controller
             $user = Auth::user();
             $empresa = Empresa::Find($user->empresa);
 
+            // Verificamos si la suma es mayor que 0
+            $sumaPrecios = collect($request->precio)
+            ->map(fn($precio) => floatval($precio))
+            ->sum();
+
+            if ($sumaPrecios <= 0) {
+            return back()->with('danger', 'La suma de los precios no puede ser 0.')->withInput();
+            }
+
+
             //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
             if($request->realizar == 2){
                 //Cuando se realiza el ingreso por categoría.
@@ -1273,9 +1283,9 @@ class IngresosController extends Controller
             $valorAnticipo = false;
             if($ingreso->anticipo == 1){
                 $itemAnticipo = $items->first();
-                $cuentaIngresoDinero = $itemAnticipo->categoria; //hace referencia a la pk de la tabla puc
-                $cuentaAnticipo = $itemAnticipo->anticipo; //hace referencia a la pk de la tabla anticipo
-                $valorAnticipo = round($itemAnticipo->valor);
+                $cuentaIngresoDinero = isset($itemAnticipo->categoria) ? $itemAnticipo->categoria : false; //hace referencia a la pk de la tabla puc
+                $cuentaAnticipo = isset($itemAnticipo->anticipo) ? $itemAnticipo->anticipo : false; //hace referencia a la pk de la tabla anticipo
+                $valorAnticipo = isset($itemAnticipo->valor) ? round($itemAnticipo->valor) : false;
             }
 
             $items = $items->get();

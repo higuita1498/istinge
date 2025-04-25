@@ -3021,6 +3021,9 @@ class CronController extends Controller
             $dia = 1;
         }else $dia = getdate()['mday'];
 
+        //Validacion de ingresos creados y no habilitado el catv o internet
+        $this->refreshCorteIntertTV();
+
         $empresa = Empresa::Find(1);
 
         $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',$dia)->get();
@@ -3067,9 +3070,14 @@ class CronController extends Controller
                     "mimeType" => "application/pdf",
                     "file" => $facturabase64,
                 ];
+                $celular = null;
+                $celular = $contacto->celular != null ? $contacto->celular : $contacto->telefono1;
+                if($celular == null){
+                    break;
+                }
 
                 $contact = [
-                    "phone" =>  "57" . $contacto->celular,
+                    "phone" =>  "57" . $celular,
                     "name" => $contacto->nombre . " " . $contacto->apellido1
                 ];
 
@@ -3507,5 +3515,109 @@ class CronController extends Controller
         }
 
         return "correccion finalizada";
+    }
+
+    public function refreshCorteIntertTV(){
+
+        $fecha = Carbon::now()->format('Y-m-d');
+        //ingresos asociados a facturas del dia de hoy.
+        $ingresos = Ingreso::where('fecha',$fecha)
+        ->where('tipo',1)->where('revalidacion_enable',0)
+        ->get();
+
+        //obtenemos los contratos o el contrato que la factura tiene
+        foreach($ingresos as $ingreso){
+            $facturas = IngresosFactura::where('ingreso',$ingreso->id)->get()->pluck('factura');
+            if($facturas->count() > 0){
+
+                $contratos = Factura::leftJoin('facturas_contratos as fc','fc.factura_id','factura.id')
+                ->whereIn('fc.factura_id',$facturas)
+                ->where('factura.estatus',0)
+                ->pluck('fc.contrato_nro')
+                ->unique()
+                ->values();
+
+                if($contratos->count() > 0){
+                    foreach($contratos as $contrato){
+                        $contrato = Contrato::where('nro',$contrato)->first();
+                        //Este es el de habilitacion de CATV
+                        /* * * API CATV * * */
+                        $empresa = Empresa::find(1);
+                        if($contrato->olt_sn_mac && $empresa->adminOLT != null){
+
+                            $curl = curl_init();
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                CURLOPT_HTTPHEADER => array(
+                                    'X-token: '.$empresa->smartOLT
+                                ),
+                                ));
+
+                            $response = curl_exec($curl);
+                            $response = json_decode($response);
+
+                            if(isset($response->status) && $response->status == true){
+                                $contrato->state_olt_catv = 1;
+                                $contrato->save();
+                            }
+                        }
+                        /* * * API CATV * * */
+
+                        //Este es el de internet
+                        /* * * API MIKROTIK * * */
+                        if($contrato->server_configuration_id){
+                            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                            $API = new RouterosAPI();
+                            $API->port = $mikrotik->puerto_api;
+
+                            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                $API->write('/ip/firewall/address-list/print', TRUE);
+                                $ARRAYS = $API->read();
+
+                                #ELIMINAMOS DE MOROSOS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=morosos",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
+
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE MOROSOS#
+
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "list" => 'ips_autorizadas'
+                                    )
+                                );
+                                #AGREGAMOS A IP_AUTORIZADAS#
+
+                                $API->disconnect();
+
+                                $contrato->state = 'enabled';
+                                $contrato->save();
+                            }
+                        }
+                        /* * * API MIKROTIK * * */
+                    }
+                }
+
+            }
+
+            $ingreso->revalidacion_enable = 1;
+            $ingreso->save();
+        }
     }
 }
