@@ -2346,6 +2346,10 @@ class CronController extends Controller
         $empresa = Empresa::find(1);
         if($request->status == 'success'){
 
+            $reference = $request->reference;
+            preg_match('/^\d+/', $reference, $matches);
+            $codigoFactura = $matches[0];
+
             $factura = Factura::where('codigo','LIKE', '%' . $request->reference . '%')->first();
 
             if($factura->estatus == 1){
