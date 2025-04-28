@@ -263,32 +263,43 @@
         			cargando(true);
 
         			$.ajax({
-        				url: url,
-        				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        				method: 'get',
-        				success: function (data) {
-        					console.log(data);
-        					cargando(false);
+                    url: url,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    method: 'get',
+                    success: function (data) {
+                        console.log(data);
+                        cargando(false);
 
-        					var $select = $('#contrato_sms');
-        					$select.empty();
-        					$.each(data.data,function(key, value){
-        						var apellidos = '';
-        						if(value.apellido1){
-        							apellidos += ' '+value.apellido1;
-        						}
-        						if(value.apellido2){
-        							apellidos += ' '+value.apellido2;
-        						}
-        						$select.append('<option value='+value.id+' class="'+value.state+'">'+value.nombre+' '+apellidos+' - '+value.nit+'</option>');
-        					});
-        					$select.selectpicker('refresh');
-							refreshClient();
-        				},
-        				error: function(data){
-        					cargando(false);
-        				}
-        			});
+                        var $select = $('#contrato_sms');
+                        $select.empty();
+                        $.each(data.data, function (key, value) {
+                            var apellidos = '';
+                            if (value.apellido1) {
+                                apellidos += ' ' + value.apellido1;
+                            }
+                            if (value.apellido2) {
+                                apellidos += ' ' + value.apellido2;
+                            }
+
+                            // Definimos los valores adicionales que quieres mostrar
+                            var grupoCorte = value.grupo_corte && value.grupo_corte.id ? 'grupo-' + value.grupo_corte.id : 'grupo-no';
+                            var servidor = value.server_configuration_id && value.server_configuration_id ? 'servidor-' + value.server_configuration_id : 'servidor-no';
+                            var factura = value.factura_id != null ? 'factura-si' : 'factura-no';
+                            var vereda = value.vereda != null ? 'vereda-' + value.vereda : 'vereda-no';
+
+                            // Construimos la clase completa
+                            var clasesExtra = value.state + ' ' + grupoCorte + ' ' + servidor + ' ' + factura + ' ' + vereda;
+
+                            // Agregamos todo eso en la opción
+                            $select.append('<option value="' + value.id + '" class="' + clasesExtra + '">' + value.nombre + apellidos + ' - ' + value.nit + '</option>');
+                        });
+                        $select.selectpicker('refresh');
+                        refreshClient();
+                    },
+                    error: function (data) {
+                        cargando(false);
+                    }
+                });
         		}
         		return false;
         	}

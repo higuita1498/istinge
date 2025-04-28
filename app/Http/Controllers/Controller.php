@@ -2009,15 +2009,33 @@ if ($mikrotik) {
 
     public function getContractsVereda($vereda){
         $contratos = Contrato::query()
-            ->select('contracts.id', 'contracts.state', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')
-            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+            ->select('contracts.id', 'contracts.state', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit',
+            'contracts.grupo_corte', 'contracts.server_configuration_id','contactos.vereda','contracts.nro')
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ;
 
         $contratos->where('contactos.vereda', 'like', "%{$vereda}%");
+        $contratos = $contratos->orderBy('contracts.state', 'desc')->get();
+
+        foreach($contratos as $contrato){
+
+            $facturaContrato = Factura::join('facturas_contratos as fc','fc.factura_id','factura.id')
+            ->where('fc.contrato_nro',$contrato->nro)
+            ->where('estatus',1)
+            ->orderBy('fc.id','desc')
+            ->first();
+
+            if($facturaContrato){
+                $contrato->factura_id = $facturaContrato->id;
+            }else{
+                $contrato->factura_id = null;
+            }
+        }
 
         return response()->json([
             'succes'    => true,
             'search'    => $vereda,
-            'data'      => $contratos->orderBy('contracts.state', 'desc')->get(),
+            'data'      => $contratos,
         ]);
     }
 
