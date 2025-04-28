@@ -2350,7 +2350,7 @@ class CronController extends Controller
             preg_match('/^\d+/', $reference, $matches);
             $codigoFactura = $matches[0];
 
-            $factura = Factura::where('codigo','LIKE', '%' . $request->reference . '%')->first();
+            $factura = Factura::where('codigo','LIKE', '%' . $codigoFactura . '%')->first();
 
             if($factura->estatus == 1){
                 $empresa = Empresa::find($factura->empresa);
