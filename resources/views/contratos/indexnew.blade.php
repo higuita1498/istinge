@@ -225,6 +225,7 @@
                                 <option value="opcion_2">Contratos con descuento % ó $</option>
                                 <option value="opcion_3">Dos o más facturas abiertas</option>
                                 <option value="opcion_4">Dos o más facturas vencidas</option>
+                                <option value="opcion_5">Contratos sin facturas</option>
                             </select>
                         </div>
 
@@ -246,12 +247,12 @@
                                 <div class="col-md-4 pr-1">
                                     <input type="text" class="form-control" id="fecha_sin_facturas" name="fecha_sin_facturas" placeholder="Fecha de filtro sin facturas">
                                 </div>
-                                <div class="col-md-4 pl-1">
+                                {{-- <div class="col-md-4 pl-1">
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" id="sin_facturas_check" name="sin_facturas_check">
                                         <label class="form-check-label" for="sin_facturas_check">Contratos sin facturas</label>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -507,7 +508,6 @@
                 data.tipo_contrato = $("#tipo_contrato").val();
                 data.otra_opcion = $("#otra_opcion").val();
                 data.fecha_corte = $("#fecha-corte").val();
-                data.sin_facturas_check = $('#sin_facturas_check').is(':checked');
                 data.fecha_sin_facturas = $('#fecha_sin_facturas').val();
                 data.filtro = true;
             });
@@ -526,9 +526,9 @@
             }
         });
 
-        $('#sin_facturas_check, #fecha_sin_facturas').on('change', function() {
+        $('#fecha_sin_facturas').on('change', function() {
             // Verificar que el check esté marcado y que haya una fecha seleccionada
-            if ($('#sin_facturas_check').is(':checked') && $('#fecha_sin_facturas').val()) {
+            if ($('#fecha_sin_facturas').val()) {
                 getDataTable(); // Actualiza la tabla cuando se cumplen ambas condiciones
             }
         });
@@ -1014,7 +1014,6 @@
                 data.tipo_contrato = $("#tipo_contrato").val();
                 data.otra_opcion = $("#otra_opcion").val();
                 data.fecha_corte = $("#fecha-corte").val();
-                data.sin_facturas_check = $('#sin_facturas_check').is(':checked');
                 data.fecha_sin_facturas = $('#fecha_sin_facturas').val();
                 data.filtro = true;
             });

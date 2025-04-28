@@ -170,7 +170,8 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.client_id', $request->cliente_id);
                 });
             }
-            if ($request->sin_facturas_check && $request->fecha_sin_facturas) {
+
+            if ($request->fecha_sin_facturas) {
                 $fechaFiltro = Carbon::parse($request->fecha_sin_facturas)->format('Y-m-d');
                 $inicioDia = Carbon::parse($fechaFiltro)->startOfDay();
                 $finDia = Carbon::parse($fechaFiltro)->endOfDay();
@@ -183,11 +184,20 @@ class ContratosController extends Controller
                     $query->whereBetween('factura.fecha', [$inicioDia, $finDia]);
                 });
             }
+
             if($request->plan){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.plan_id', $request->plan);
                 });
             }
+
+            if ($request->otra_opcion && $request->otra_opcion == "opcion_5") {
+                $contratos->leftJoin('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+                ->leftJoin('factura as f', 'fc.factura_id', '=', 'f.id')
+                ->whereNull('f.id')
+                ->groupBy('contracts.id');
+            }
+
             // Aplica el filtro de facturas si el usuario lo selecciona
             if ($request->otra_opcion && $request->otra_opcion == "opcion_4") {
                 $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
@@ -2825,6 +2835,71 @@ class ContratosController extends Controller
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.etiqueta_id', $request->etiqueta);
             });
+        }
+
+        if ($request->otra_opcion && $request->otra_opcion == "opcion_5") {
+            $contratos->leftJoin('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+            ->leftJoin('factura as f', 'fc.factura_id', '=', 'f.id')
+            ->whereNull('f.id')
+            ->groupBy('contracts.id');
+        }
+
+        // Aplica el filtro de facturas si el usuario lo selecciona
+        if ($request->otra_opcion && $request->otra_opcion == "opcion_4") {
+            $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+              ->join('factura as f', 'fc.factura_id', '=', 'f.id')
+              ->where('f.estatus', '=', 1)
+              ->where('f.vencimiento','<=',Carbon::now()->format('Y-m-d'))
+              ->groupBy('contracts.id')
+              ->havingRaw('COUNT(f.id) > 1');
+        }
+
+        if($request->otra_opcion && $request->otra_opcion == "opcion_3"){
+            $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+              ->join('factura as f', 'fc.factura_id', '=', 'f.id')
+              ->where('f.estatus', '=', 1)
+              ->groupBy('contracts.id')
+              ->havingRaw('COUNT(f.id) > 1');
+        }
+
+        if($request->otra_opcion && $request->otra_opcion == "opcion_2"){
+            $contratos->where(function ($query) {
+                $query->whereNotNull('contracts.descuento')
+                      ->orWhereNotNull('contracts.descuento_pesos');
+            });
+        }
+
+        //Esta opción es para mirar los contratos deshabilitados con su ultima factura pagada.
+        if ($request->otra_opcion && $request->otra_opcion == "opcion_1") {
+                $contratos = Contrato::where('state','disabled')->get();
+                $i = 0;
+                $arrayContratos = array();
+                foreach($contratos as $contrato){
+
+                $facturaContratos = DB::table('facturas_contratos')
+                    ->where('contrato_nro',$contrato->nro)->orderBy('id','DESC')->first();
+
+                if($facturaContratos){
+                    $ultFactura = Factura::Find($facturaContratos->factura_id);
+                    if(isset($ultFactura->estatus) && $ultFactura->estatus == 0){
+                        array_push($arrayContratos,$contrato->id);
+                    }
+                }
+            }
+            $contratos = Contrato::
+            select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
+            'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
+            'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono',
+            'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion',
+            'contactos.celular as c_celular','contactos.fk_idmunicipio',
+            'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp',
+            'contactos.estrato as c_estrato','barrio.nombre as barrio_nombre',
+            DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
+            ->selectRaw('INET_ATON(contracts.ip) as ipformat')
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
+            ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id')
+            ->whereIn('contracts.id',$arrayContratos);
         }
 
         // $contratos = $contratos->where('contracts.status', 1)->get();
