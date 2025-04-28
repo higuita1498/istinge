@@ -121,7 +121,7 @@
 
             <div class="col-md-3 form-group">
                 <label class="control-label">Corregimiento / Vereda</label>
-                <input class="form-control" type="text" name="vereda" id="vereda" >
+                <input class="form-control" type="text" name="vereda" id="vereda" autocomplete="off">
                 <span class="help-block error">
         	        <strong>{{ $errors->first('vereda') }}</strong>
         	    </span>
