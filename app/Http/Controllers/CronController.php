@@ -3465,6 +3465,11 @@ class CronController extends Controller
             }
         }
         //Fin REVISION RECONEXION GENERAL//.
+
+
+        //Inicio validacion de codigos iguales emitidos
+        $this->validateCodeEmision();
+        //Fin validacion de codigos iguales emitidos
     }
 
     //Este metodo me permite validar que facturas se crearon con el mismo codigo y quedaron emitidas, la que tiene el
@@ -3623,5 +3628,84 @@ class CronController extends Controller
             $ingreso->revalidacion_enable = 1;
             $ingreso->save();
         }
+    }
+
+    public function validateCodeEmision(){
+
+        $facturas = Factura::select('codigo')
+            ->groupBy('codigo')
+            ->havingRaw('COUNT(*) > 1')
+            ->where('tipo',2)
+            ->get();
+
+        $empresa = Empresa::Find(1);
+        $resolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)
+        ->where('num_equivalente', 0)
+        ->where('nomina', 0)
+        ->where('estado',1)
+        ->where('tipo',2)
+        ->where('preferida', 1)->first();
+
+        foreach($facturas as $f){
+
+            $facturasDobles = Factura::where('codigo',$f->codigo)->get();
+
+            foreach($facturasDobles as $fd){
+             $validacion = $this->validateStatusDian($empresa->nit,$fd->codigo,"01",$resolucionNumeracion->prefijo);
+             $validacion = json_decode($validacion, true);
+
+            $xmlString = base64_decode($validacion['document']);
+
+            // Convertir string a XML principal
+            $xml = new \SimpleXMLElement($xmlString);
+
+            // Registrar espacios de nombres
+            $namespaces = $xml->getNamespaces(true);
+            $xml->registerXPathNamespace('cac', $namespaces['cac']);
+            $xml->registerXPathNamespace('cbc', $namespaces['cbc']);
+
+            // Buscar el contenido de <cbc:Description> que contiene el XML embebido
+            $descriptionNodes = $xml->xpath('//cac:Attachment/cac:ExternalReference/cbc:Description');
+
+            if (!empty($descriptionNodes)) {
+                $embeddedXmlString = (string)$descriptionNodes[0];
+
+                // Convertir el XML embebido (factura) a otro objeto SimpleXMLElement
+                $embeddedXml = new \SimpleXMLElement($embeddedXmlString);
+
+                // Registrar namespace del QR
+                $embeddedXml->registerXPathNamespace('sts', 'dian:gov:co:facturaelectronica:Structures-2-1');
+
+                // Buscar la etiqueta <sts:QRCode>
+                $qrNode = $embeddedXml->xpath('//sts:QRCode');
+                $qrCodeRaw = (string) $qrNode[0];
+
+                // Limpia saltos de línea, espacios, tabs, etc.
+                $qrCodeText = preg_replace('/\s+/', '', $qrCodeRaw);
+
+                // Extrae NitAdquiriente con regex
+                if (preg_match('/NitAdquiriente=(\d+)/', $qrCodeText, $matches)) {
+                    $nitAdquiriente = $matches[1];
+
+                    if($nitAdquiriente != $fd->cliente()->nit){
+                        $fd->codigo = $resolucionNumeracion->prefijo . $resolucionNumeracion->inicio;
+                        $fd->emitida = 0;
+                        $fd->save();
+
+                        $resolucionNumeracion->inicio++;
+                        $resolucionNumeracion->save();
+
+                        $resolucionNumeracion->fresh();
+                        $fd->fresh();
+                    }
+                }
+
+                if (!empty($qrNode)) {
+                    // echo nl2br((string)$qrNode[0]); // Imprime QR con saltos de línea
+                }
+            }
+            }
+        }
+            return "Cambio completado";
     }
 }

@@ -81,6 +81,7 @@ Route::get('sendInvoices/{fecha}','CronController@sendInvoices')->name('sendInvo
 Route::get('/enviofacturawpp','CronController@envioFacturaWpp');
 Route::get('/estatus-emision-dian','CronController@validateEmisionApi');
 Route::get('/validar-factura-doble','CronController@validarFacturasDobles');
+Route::get('/validate-codigo-emision','CronController@validateCodeEmision');
 /*PAYU*/
 
 Route::get('/respuestapayu', 'Controller@respuestapayu')->name('respuestapayu');
