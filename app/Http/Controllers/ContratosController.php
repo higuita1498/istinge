@@ -379,7 +379,6 @@ class ContratosController extends Controller
             }
 
             if($request->linea){
-
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.linea', 'like', "%{$request->linea}%");
                 });
@@ -2816,11 +2815,13 @@ class ContratosController extends Controller
                 $query->whereDate('contracts.created_at', '>=', Carbon::parse($request->desde)->format('Y-m-d'));
             });
         }
+
         if($request->hasta != null){
             $contratos->where(function ($query) use ($request) {
                 $query->whereDate('contracts.created_at', '<=', Carbon::parse($request->hasta)->format('Y-m-d'));
             });
         }
+
         if($request->tipo_contrato != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.tipo_contrato', $request->tipo_contrato);
