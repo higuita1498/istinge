@@ -45,8 +45,9 @@ class UsuariosController extends Controller
         $roles = Roles::where('id_empresa','=', Auth::user()->empresa)->where('id', '<>', 3)->get();
         $cuentas = DB::table('bancos')->where('empresa',Auth::user()->empresa)->get();
         $oficinas = Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $servidores = Mikrotik::whereIn('status',[0,1])->get();
         view()->share(['title' => 'Nuevo Usuario']);
-        return view('configuracion.usuarios.create')->with(compact('roles','cuentas', 'oficinas'));
+        return view('configuracion.usuarios.create')->with(compact('roles','cuentas', 'oficinas','servidores'));
     }
 
     public function store(Request $request){
