@@ -1725,7 +1725,10 @@ class FacturasController extends Controller{
 
 
             if($empresa->formato_impresion == 1){
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr'));
+                if(!isset($CUFEvr)){
+                    $CUFEvr =null;
+                }
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'));
             }else
             {
                 $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
