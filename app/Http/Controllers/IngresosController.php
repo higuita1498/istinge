@@ -400,7 +400,7 @@ class IngresosController extends Controller
                         }
 
                         //Conversión de factura estandar a factura electrónica.
-                        if(isset($request->tipo_electronica)){
+                        if(isset($request->tipo_electronica) && $request->tipo_electronica != 5){
                             //primero recuperamos
                             $nro=NumeracionFactura::where('empresa',$empresa->id)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
                             $inicio = $nro->inicio;
