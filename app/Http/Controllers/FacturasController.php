@@ -4273,47 +4273,99 @@ class FacturasController extends Controller{
         }
     }
 
-    public function convertirelEctronica($facturaId, $masivo=false){
-        $factura = Factura::find($facturaId);
-        $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+    public function convertirelEctronica($facturaId, $masivo = false)
+    {
+        try {
+            $factura = Factura::find($facturaId);
 
-        if($num){
-            $numero = $num->nro + 1;
-        }else{
-            $numero = 1;
-        }
+            if (!$factura) {
+                $mensaje = 'Factura no encontrada con ID: ' . $facturaId;
+                if (!$masivo) {
+                    return back()->with('danger', $mensaje);
+                }
+                return [
+                    'success' => false,
+                    'message' => $mensaje,
+                    'factura_id' => $facturaId,
+                ];
+            }
 
-        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+            $num = Factura::where('empresa', 1)->orderBy('nro', 'asc')->get()->last();
+            $numero = $num ? $num->nro + 1 : 1;
 
-        //Actualiza el nro de inicio para la numeracion seleccionada
-        if(!$nro){
-            return back()->with('danger', 'No se encontró una numeración para facturas DIAN preferida.');
-        }
-        $inicio = $nro->inicio;
-        $nro->inicio += 1;
-        $nro->save();
+            $nro = NumeracionFactura::where('empresa', Auth::user()->empresa)
+                ->where('preferida', 1)
+                ->where('estado', 1)
+                ->where('tipo', 2)
+                ->first();
 
-        $factura->codigo=$nro->prefijo.$inicio;
-        $factura->nro = $numero;
-        $factura->numeracion = $nro->id;
-        $factura->tipo = 2;
-        $factura->fecha=Carbon::now()->format('Y-m-d');
-        $factura->save();
-        if($masivo == false){
-            return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');
+            if (!$nro) {
+                $mensaje = 'No se encontró una numeración para facturas DIAN preferida.';
+                if (!$masivo) {
+                    return back()->with('danger', $mensaje);
+                }
+                return [
+                    'success' => false,
+                    'message' => $mensaje,
+                    'factura_id' => $facturaId,
+                ];
+            }
+
+            // Actualizar y guardar datos
+            $inicio = $nro->inicio;
+            $nro->inicio += 1;
+            $nro->save();
+
+            $factura->codigo = $nro->prefijo . $inicio;
+            $factura->nro = $numero;
+            $factura->numeracion = $nro->id;
+            $factura->tipo = 2;
+            $factura->fecha = Carbon::now()->format('Y-m-d');
+            $factura->save();
+
+            if (!$masivo) {
+                return back()->with('success', 'Factura con el nuevo código: ' . $factura->codigo . ' convertida correctamente.');
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Factura convertida exitosamente.',
+                'factura_id' => $facturaId,
+                'codigo' => $factura->codigo,
+            ];
+        } catch (\Exception $e) {
+            $mensajeError = 'Ocurrió un error al convertir la factura: ' . $e->getMessage();
+
+            if (!$masivo) {
+                return back()->with('danger', $mensajeError);
+            }
+
+            return [
+                'success' => false,
+                'message' => $mensajeError,
+                'factura_id' => $facturaId,
+            ];
         }
     }
+
 
     public function conversionmasivaElectronica($facturas){
         $facturas = explode(",", $facturas);
         for ($i=0; $i < count($facturas) ; $i++) {
-            $this->convertirelEctronica($facturas[$i],1);
+            $response = $this->convertirelEctronica($facturas[$i],1);
         }
 
-        return response()->json([
-            'success' => true,
-            'text'    => 'Conversión masiva de facturas estándar a facturas electrónicas temrinada',
-        ]);
+        if(isset($response['success']) && $response['success'] == false){
+            return response()->json([
+                'success' => false,
+                'text'    => $response['message'],
+            ]);
+        }else{
+            return response()->json([
+                'success' => true,
+                'text'    => 'Conversión masiva de facturas electrónicas terminada',
+            ]);
+        }
     }
 
     public function emisionMasivaXml($facturas){

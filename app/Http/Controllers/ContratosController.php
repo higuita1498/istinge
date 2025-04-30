@@ -171,6 +171,7 @@ class ContratosController extends Controller
                 });
             }
 
+
             if ($request->fecha_sin_facturas) {
                 $fechaFiltro = Carbon::parse($request->fecha_sin_facturas)->format('Y-m-d');
                 $inicioDia = Carbon::parse($fechaFiltro)->startOfDay();
@@ -254,6 +255,12 @@ class ContratosController extends Controller
 
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhereIn('contracts.servicio_tv', $request->plan_tv);
+                });
+            }
+            if (isset($request->catv)) {
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhereNotNull('contracts.olt_sn_mac')
+                            ->whereIn('contracts.state_olt_catv', $request->catv);
                 });
             }
             if($request->ap){
@@ -2717,6 +2724,12 @@ class ContratosController extends Controller
                 $query->orWhere('contracts.client_id', $request->client_id);
             });
         }
+        if ($request->catv != null) {
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhereNotNull('contracts.olt_sn_mac')
+                ->whereIn('contracts.state_olt_catv', [$request->catv]);
+            });
+        }
         if($request->plan != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.plan_id', $request->plan);
@@ -2961,9 +2974,8 @@ class ContratosController extends Controller
                 ->setCellValue($letras[30].$i, round($contrato->deudaFacturas()))
                 ->setCellValue($letras[31].$i, round($sumaPlanes))
                 ->setCellValue($letras[32].$i, $contrato->c_etiqueta)
-                ->setCellValue($letras[33].$i, $contrato->fechaDesconexion()
-                ->setCellValue($letras[34].$i, $contrato->linea)
-                );
+                ->setCellValue($letras[33].$i, $contrato->fechaDesconexion())
+                ->setCellValue($letras[34].$i, $contrato->linea ? $contrato->linea : 0);
             $i++;
         }
 

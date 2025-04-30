@@ -220,6 +220,12 @@
                             </div>
                         @endif
                         <div class="col-md-3 pl-1 pt-1">
+        					<select title="CATV" class="form-control selectpicker" id="catv" name="catv" data-size="5" data-live-search="true" multiple>
+        						<option value="1">Habilitado</option>
+        						<option value="0">Deshabilitado</option>
+        					</select>
+        				</div>
+                        <div class="col-md-3 pl-1 pt-1">
                             <select title="Otras opciones" class="form-control selectpicker" id="otra_opcion" name="otra_opcion">
                                 <option value="opcion_1">Contratos deshabilitados con última factura pagada</option>
                                 <option value="opcion_2">Contratos con descuento % ó $</option>
@@ -484,6 +490,7 @@
                 data.linea = $('#linea').val();
                 data.plan = $('#plan').val();
                 data.plan_tv = $('#plan_tv').val();
+                data.catv = $('#catv').val();
                 data.state = $('#state').val();
                 data.grupo_corte = $('#grupo_cort').val();
                 data.ip = $('#ip').val();
@@ -540,7 +547,7 @@
             }
         });
 
-        $('#client_id, #etiqueta, #plan, #barrio, #plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
+        $('#client_id, #etiqueta, #plan, #barrio, #plan_tv, #catv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
             getDataTable();
             return false;
         });
@@ -598,6 +605,7 @@
         $('#client_id').val('').selectpicker('refresh');
 		$('#plan').val('').selectpicker('refresh');
         $('#plan_tv').val('').selectpicker('refresh');
+        $('#catv').val('').selectpicker('refresh');
 		$('#grupo_cort').val('').selectpicker('refresh');
 		$('#state').val('').selectpicker('refresh');
 		$('#ip').val('');
@@ -628,7 +636,7 @@
 	}
 
 	function exportar() {
-	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&plan_tv='+$('#plan_tv').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val()+'&sn='+$('#sn').val()+'&otra_opcion='+$('#otra_opcion').val();
+	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&plan_tv='+$('#plan_tv').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val()+'&sn='+$('#sn').val()+'&otra_opcion='+$('#otra_opcion').val()+'&catv='+$('#catv').val();
 	}
 
     function states(state){
@@ -990,6 +998,7 @@
                 data.cliente_id = $('#client_id').val();
                 data.plan = $('#plan').val();
                 data.plan_tv = $('#plan_tv').val();
+                data.catv = $('#catv').val();
                 data.state = $('#state').val();
                 data.grupo_corte = $('#grupo_cort').val();
                 data.ip = $('#ip').val();

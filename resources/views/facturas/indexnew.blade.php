@@ -579,7 +579,7 @@
             }
 
             swal({
-                title: '¿Desea realizar la emisión de ' + nro + ' facturas electrónicas?',
+                title: '¿Desea convertir ' + nro + ' facturas estandar a electrónicas?',
                 text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
                 type: 'question',
                 showCancelButton: true,
@@ -592,16 +592,27 @@
                     cargando(true);
 
                     var url = window.location.pathname.split("/")[1] === "software" ?
-                        `/software/empresa/facturas/emisionmasivaxml/` + facturas :
-                        `/empresa/facturas/emisionmasivaxml/` + facturas;
-
+                        `/software/empresa/facturas/conversionmasiva/` + facturas :
+                        `/empresa/facturas/conversionmasiva/` + facturas;
                     $.ajax({
                         url: url,
                         method: 'GET',
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                         success: function(data) {
                             cargando(false);
-                            swal({
+
+                            if(data.success == false){
+                                swal({
+                                    title: 'ERROR',
+                                    html: data.message,
+                                    type: 'error',
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#d33',
+                                    confirmButtonText: 'ACEPTAR',
+                                });
+                                return false;
+                            }else{
+                                swal({
                                 title: 'PROCESO REALIZADO',
                                 html: data.text,
                                 type: 'success',
@@ -609,6 +620,7 @@
                                 confirmButtonColor: '#1A59A1',
                                 confirmButtonText: 'ACEPTAR',
                             });
+                            }
                             getDataTable();
                         },
                         error: function(xhr) {
