@@ -755,6 +755,22 @@ class CronController extends Controller
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
 
+                //** Desarrollo nuevo:
+                //** Analizar la cantidad de facturas abiertas del contrato y el grupo de corte
+                $grupo_corte = null;
+                $cant_fac_grupo_corte = 1;
+                $cantFacturasVencidas = 1;
+                if(isset($contacto->grupo_corte) && $contacto->grupo_corte != ""){
+                    $grupo_corte = GrupoCorte::Find($contacto->grupo_corte);
+                    $cant_fac_grupo_corte = $grupo_corte->nro_factura_vencida;
+                }
+
+                if(isset($grupo_corte->nro_factura_vencida) && $grupo_corte->nro_factura_vencida > 1){
+                    $contrato = Contrato::Find($contacto->contrato_id);
+                    $cantFacturasVencidas = $contrato->cantidadFacturasVencidas();
+                }
+                //** Fin desarrollo nuevo
+
                 $factura = Factura::find($contacto->factura);
 
                 //ESto es lo que hay que refactorizar.
@@ -785,7 +801,9 @@ class CronController extends Controller
                         ->value('id');
                 }
 
-                if($factura->id == $ultimaFacturaRegistrada){
+                //** Validacion nueva:
+                ///** validamos que segun el grupo_corte la cantidad de facturas vencidas si sea igual
+                if($factura->id == $ultimaFacturaRegistrada && $cantFacturasVencidas >= $cant_fac_grupo_corte){
 
                     //1. debemos primero mirar si los contrsatos existen en la tabla detalle, si no hacemos el proceso antiguo
                     $contratos = Contrato::whereIn('nro',$facturaContratos)->get();
@@ -992,13 +1010,28 @@ class CronController extends Controller
             ->whereIn('cs.grupo_corte', $grupos_corte_array)
             ->where('cs.fecha_suspension', null)
             ->where('cs.state_olt_catv', true)
-            ->whereRaw("DATE_ADD(f.vencimiento, INTERVAL gc.prorroga_tv DAY) <= NOW()") // Agregamos la prórroga a la fecha de vencimiento
             ->orderBy('f.id', 'desc')
             ->take(50)
             ->get();
 
             if($contactos){
                 foreach ($contactos as $contacto) {
+
+                    //** Desarrollo nuevo:
+                    //** Analizar la cantidad de facturas abiertas del contrato y el grupo de corte
+                    $grupo_corte = null;
+                    $cant_fac_grupo_corte = 1;
+                    $cantFacturasVencidas = 1;
+                    if(isset($contacto->grupo_corte) && $contacto->grupo_corte != ""){
+                        $grupo_corte = GrupoCorte::Find($contacto->grupo_corte);
+                        $cant_fac_grupo_corte = $grupo_corte->nro_factura_vencida;
+                    }
+
+                    if(isset($grupo_corte->nro_factura_vencida) && $grupo_corte->nro_factura_vencida > 1){
+                        $contrato = Contrato::Find($contacto->contrato_id);
+                        $cantFacturasVencidas = $contrato->cantidadFacturasVencidas();
+                    }
+                    //** Fin desarrollo nuevo
 
                     $factura = Factura::find($contacto->factura);
 
@@ -1030,7 +1063,9 @@ class CronController extends Controller
                         ->value('id');
                     }
 
-                    if($factura->id == $ultimaFacturaRegistrada){
+                    //** Validacion nueva:
+                    ///** validamos que segun el grupo_corte la cantidad de facturas vencidas si sea igual
+                    if($factura->id == $ultimaFacturaRegistrada && $cantFacturasVencidas >= $cant_fac_grupo_corte){
 
                     //1. debemos primero mirar si los contrsatos existen en la tabla detalle, si no hacemos el proceso antiguo
                     $contratos = Contrato::whereIn('nro',$facturaContratos)->get();
