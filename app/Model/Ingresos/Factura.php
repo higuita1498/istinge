@@ -1558,7 +1558,8 @@ public function forma_pago()
                     $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
                 }
 
-                $diasCobrados = $fechaContrato->diffInDays($fechaFin)+$diasdeMas;
+                $diasCobrados = $fechaContrato->diffInDays($fechaFin)+$diasdeMas +1;
+                //le agregamos un dia mas por que se debe cobrar desde el mismo dia de instalacion
 
                 /*
                     si la fecha no está entre el rango de la creacion del contrato y la fecha de corte entonces cojemos esos dias de
