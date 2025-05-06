@@ -53,6 +53,7 @@ use App\Services\ElectronicBillingService;
 use App\CRM;
 use App\Instance;
 use App\Services\WapiService;
+use Facade\FlareClient\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -4609,4 +4610,64 @@ class FacturasController extends Controller{
         return Response::download($path, "FV-{$factura->codigo}.xml", $headers);
     }
 
+    public function facturasWhatsappIndex(Request $request){
+
+        view()->share(['seccion' => 'facturas', 'title' => 'Envío Whatsapp', 'icon' =>'fas fa-plus', 'subseccion' => 'venta']);
+        $this->getAllPermissions(Auth::user()->id);
+
+        if(!$request->dia){
+            $dia = Carbon::now()->format('d');
+        }
+
+        if(!$request->fecha){
+            $request->fecha = Carbon::now()->format('Y-m-d');
+        }else{
+            $request->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+            $dia = Carbon::parse($request->fecha)->format('d');
+        }
+
+        $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',(int) $dia)->get();
+        $grupos_corte_array = array();
+        foreach($grupos_corte as $grupo){
+            array_push($grupos_corte_array,$grupo->id);
+        }
+
+        $totalFaltantes = Factura::
+        join('contracts as c','c.id','=','factura.contrato_id')
+        ->join('grupos_corte as gc','gc.id','=','c.grupo_corte')
+        ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',$request->fecha)
+        ->where('factura.whatsapp',0)
+        ->whereIn('c.grupo_corte',$grupos_corte_array)
+        ->select('factura.*', 'gc.nombre as grupoNombre')->count('factura.id');
+
+        $facturas = Factura::
+        join('contracts as c','c.id','=','factura.contrato_id')
+        ->join('grupos_corte as gc','gc.id','=','c.grupo_corte')
+        ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',$request->fecha)
+        ->where('factura.whatsapp',0)
+        ->whereIn('c.grupo_corte',$grupos_corte_array)
+        ->select('factura.*', 'gc.nombre as grupoNombre')
+        ->paginate();
+
+        $request->fecha = Carbon::parse($request->fecha)->format('d-m-Y');
+        return view('cronjobs.envio-whatsapp', compact('request','facturas','grupos_corte','totalFaltantes'));
+    }
+
+    public function facturasWhastappSave(Request $request){
+        if($request->fecha){
+            $request->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+            $empresa = Empresa::Find(Auth::user()->empresa);
+            if($empresa){
+                $empresa->cron_fecha_whatsapp = $request->fecha;
+                $empresa->save();
+
+                //ejecutamos la primera vez el cronjob para que el usuario pueda observar que si se hace el envio
+                $controller = new CronController();
+                $controller->envioFacturaWpp(new WapiService());
+            }
+            return redirect('empresa/facturas/facturas-whatsapp-index')->with('success', 'Se ha guardado la fecha de envío de whatsapp correctamente');
+        }else{
+            return redirect('empresa/facturas/facturas-whatsapp-index')->with('danger', 'No se ha podido guardar la fecha de envío de whatsapp');
+        }
+    }
 }

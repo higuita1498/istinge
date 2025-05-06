@@ -594,6 +594,23 @@
         </li>
     @endif
 
+    @if(1==2)
+    <li class="nav-item" id="cronjobs">
+        <a class="nav-link" data-toggle="collapse" href="#ui-cronjobs" aria-expanded="false" aria-controls="ui-cronjobs">
+            <i class="menu-icon fas fa-user-secret"></i>
+                <span class="menu-title">Cron Jobs</span>
+            <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="ui-cronjobs">
+            <ul class="nav flex-column sub-menu">
+                <li class="nav-item" id="cronjobs-contratos">
+                    <a class="nav-link" href="{{route('cronjob.whatsapp-facturas-index')}}">Facturas Whatsapp</a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    @endif
+
     @if(isset($_SESSION['permisos']['111']))
         <li class="nav-item" id="configuracion">
             <a  class="nav-link" href="{{route('configuracion.index')}}">

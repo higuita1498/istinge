@@ -1105,6 +1105,7 @@ class CronController extends Controller
 
                                 if(isset($response->status) && $response->status == true){
                                     $contrato->state_olt_catv = false;
+                                    $contrato->state = 'disabled';
                                     $contrato->save();
                                 }
 
@@ -3061,6 +3062,21 @@ class CronController extends Controller
             $dia = 1;
         }else $dia = getdate()['mday'];
 
+        $empresa = Empresa::Find(1);
+        if($empresa->cron_fecha_whatsapp != null){
+            $fecha = $empresa->cron_fecha_whatsapp;
+            $dia = (int) Carbon::parse($fecha)->format('d');
+        }else{
+            $fecha = date('Y-m-d');
+        }
+
+        //Reinicio de variable cron_fecha_whatsapp
+        $horaActual = Carbon::now()->format('H:i');
+        if ($horaActual >= '00:00' && $horaActual <= '03:00') {
+            $empresa->cron_fecha_whatsapp = Carbon::now()->format('Y-m-d');
+            $empresa->save();
+        }
+
         //Validacion de ingresos creados y no habilitado el catv o internet
         $this->refreshCorteIntertTV();
 
@@ -3078,7 +3094,7 @@ class CronController extends Controller
 
          $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
-            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',date('Y-m-d'))
+            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',$fecha)
             ->where('factura.whatsapp',0)
             ->whereIn('c.grupo_corte',$grupos_corte_array)
             ->select('factura.*')
@@ -3112,9 +3128,7 @@ class CronController extends Controller
                 ];
                 $celular = null;
                 $celular = $contacto->celular != null ? $contacto->celular : $contacto->telefono1;
-                if($celular == null){
-                    break;
-                }
+                if($celular != null){
 
                 $contact = [
                     "phone" =>  "57" . $celular,
@@ -3150,16 +3164,18 @@ class CronController extends Controller
                 if(isset($response->status) && $response->status != "success") {
                     Log::error('No se pudo enviar el mensaje, por favor intente nuevamente. ' . $contacto->nit);
                     // break;
+                }else{
+                    $factura->whatsapp = 1;
+                    $factura->save();
                 }
 
                 $archivo = public_path() . "/convertidor/" . $factura->codigo . ".pdf";
                 if (file_exists($archivo)) {
                     unlink($archivo);
                 }
-                $factura->whatsapp = 1;
-                $factura->save();
             }
-            Log::info("Lote de facturas enviadas por whatsapp correctamente.");
+                Log::info("Lote de facturas enviadas por whatsapp correctamente.");
+            }
         }
     }
 

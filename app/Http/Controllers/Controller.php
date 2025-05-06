@@ -2291,4 +2291,39 @@ if ($mikrotik) {
         return strtr($cadena, array_combine($search, $replace));
     }
 
+    /**
+     * Establece fecha dentro del request enviado
+     * @param $request
+     * @return array
+     */
+    private function setDateRequest(&$request, $all = false)
+    {
+
+        //Si no hay fecha establecida dentro de la url se establece desde el 1 al 30/31 del mes actual
+        if (!$request->fecha) {
+            $month = date('m');
+            $year = date('Y');
+            $day = date("d", mktime(0,0,0, $month+1, 0, $year));
+            $fin= date('Y-m-d', mktime(0,0,0, $month, $day, $year));
+            $request->hasta=date('d-m-Y', mktime(0,0,0, $month, $day, $year));
+            $month = date('m');
+            $year = date('Y');
+            $inicio=  date('Y-m-d', mktime(0,0,0, $month, 1, $year));
+            $request->fecha=date('d-m-Y', mktime(0,0,0, $month, 1, $year));
+        }else{
+            $inicio= date('Y-m-d', strtotime($request->fecha));
+            $fin= date('Y-m-d', strtotime($request->hasta));
+        }
+
+        if($all){
+            $inicio = Carbon::now()->subYear('10')->format('Y-m-d');
+            $fin    = Carbon::now()->format('Y-m-d');
+        }
+
+        return array(
+            'inicio'    => $inicio,
+            'fin'       => $fin
+        );
+    }
+
 }
