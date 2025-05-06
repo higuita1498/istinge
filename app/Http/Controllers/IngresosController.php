@@ -640,7 +640,7 @@ class IngresosController extends Controller
                             /* * * API MK * * */
 
                             /* * * API CATV * * */
-                            if($contrato->olt_sn_mac && $empresa->adminOLT != null){
+                            if($contrato->olt_sn_mac != null && $empresa->adminOLT != null){
 
                                 $curl = curl_init();
                                 curl_setopt_array($curl, array(
