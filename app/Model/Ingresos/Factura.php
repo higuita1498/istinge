@@ -85,6 +85,7 @@ class Factura extends Model
         else{
             $clienteDb = DB::table('factura_contacto')->where('factura',$this->id)->first();
             $cliente = new stdClass;
+            $cliente->id = null;
             $cliente->nombre = $clienteDb->nombre;
             $cliente->direccion = $clienteDb->direccion;
             $cliente->ciudad = "N/A";
