@@ -423,6 +423,7 @@ class FacturasController extends Controller{
         ')
         )
         ->selectRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) as codigo_numerico")
+        ->where('tipo','!=',3)
         ->groupBy('factura.id')
         ->orderByRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) DESC");
 
@@ -677,6 +678,7 @@ class FacturasController extends Controller{
         ')
         )
         ->selectRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) as codigo_numerico")
+        ->where('tipo','!=',3)
         ->groupBy('factura.id')
         ->orderByRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) DESC");
 
