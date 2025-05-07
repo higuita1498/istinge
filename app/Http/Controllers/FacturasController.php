@@ -3527,6 +3527,38 @@ class FacturasController extends Controller{
                 $contrato->save();
                 $API->disconnect();
             }
+
+            //Este es el de habilitacion de CATV
+            /* * * API CATV * * */
+            $empresa = Empresa::find(1);
+            if($contrato->olt_sn_mac && $empresa->adminOLT != null){
+
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_HTTPHEADER => array(
+                        'X-token: '.$empresa->smartOLT
+                    ),
+                    ));
+
+                $response = curl_exec($curl);
+                $response = json_decode($response);
+
+                if(isset($response->status) && $response->status == true){
+                    $contrato->state_olt_catv = 1;
+                    $contrato->save();
+                }
+            }
+            /* * * API CATV * * */
+
+
         }
 
         return response()->json([
