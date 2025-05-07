@@ -80,7 +80,7 @@ class Factura extends Model
 
     public function cliente(){
         if($this->cliente != null){
-            Contacto::where('id',$this->cliente)->first();
+            return Contacto::where('id',$this->cliente)->first();
         }
         else{
             $clienteDb = DB::table('factura_contacto')->where('factura',$this->id)->first();
