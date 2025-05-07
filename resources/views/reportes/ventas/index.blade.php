@@ -110,7 +110,11 @@
 				@foreach($facturas as $factura)
 					<tr>
                         <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->codigo}}</a> </td>
-                        <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></td>
+                        <td>
+                            @if($factura->cliente)
+                            <a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a>
+                            @endif
+                        </td>
                         {{-- <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->vencimiento))}}</td> --}}
                         <td>{{date('d-m-Y', strtotime($factura->pagada))}}</td>
