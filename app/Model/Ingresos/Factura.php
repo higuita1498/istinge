@@ -79,7 +79,19 @@ class Factura extends Model
 
 
     public function cliente(){
-         return Contacto::where('id',$this->cliente)->first();
+        if($this->cliente != null){
+            Contacto::where('id',$this->cliente)->first();
+        }
+        else{
+            $clienteDb = DB::table('factura_contacto')->where('factura',$this->id)->first();
+            $cliente = new stdClass;
+            $cliente->nombre = $clienteDb->nombre;
+            $cliente->direccion = $clienteDb->direccion;
+            $cliente->ciudad = "N/A";
+            $cliente->telefono1 = "N/A";
+            $cliente->nit = "N/A";
+            return $cliente;
+        }
     }
 
     public function banco(){
