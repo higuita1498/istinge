@@ -587,7 +587,12 @@ class FacturasController extends Controller{
             return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . ' ' . $msj . '</span>';
         })
         ->editColumn('nitcliente', function (Factura $factura) {
-            return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->cliente()->tip_iden('mini')} {$factura->nitcliente}</a>" : "";
+            $relacion = method_exists($factura, 'cliente') ? $factura->cliente() : null;
+            $cliente = $relacion ? $relacion->first() : null;
+
+            return $cliente
+                ? "<a href=" . route('contactos.show', $cliente) . ">{$cliente->tip_iden('mini')} {$factura->nitcliente}</a>"
+                : "";
         })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
         ->rawColumns(['codigo', 'cliente', 'nitcliente', 'estado', 'acciones', 'vencimiento'])
@@ -833,7 +838,12 @@ class FacturasController extends Controller{
             return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . '</span>';
         })
         ->editColumn('nitcliente', function (Factura $factura) {
-            return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->cliente()->tip_iden('mini')} {$factura->nitcliente}</a>" : "";
+            $relacion = method_exists($factura, 'cliente') ? $factura->cliente() : null;
+            $cliente = $relacion ? $relacion->first() : null;
+
+            return $cliente
+                ? "<a href=" . route('contactos.show', $cliente) . ">{$cliente->tip_iden('mini')} {$factura->nitcliente}</a>"
+                : "";
         })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
         ->rawColumns(['codigo', 'cliente', 'nitcliente', 'estado', 'acciones', 'vencimiento'])
