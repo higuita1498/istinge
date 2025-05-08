@@ -4662,6 +4662,14 @@ class FacturasController extends Controller{
             $dia = Carbon::parse($request->fecha)->format('d');
         }
 
+        if(isset($empresa->cron_fecha_whatsapp) && $empresa->cron_fecha_whatsapp != null){
+            $request->dia = Carbon::parse($empresa->cron_fecha_whatsapp)->format('d');
+            $request->fecha = Carbon::parse($empresa->cron_fecha_whatsapp)->format('Y-m-d');
+
+            $empresa->cron_fecha_whatsapp = $request->fecha;
+            $empresa->save();
+        }
+
         $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',(int) $dia)->get();
         $grupos_corte_array = array();
         foreach($grupos_corte as $grupo){
