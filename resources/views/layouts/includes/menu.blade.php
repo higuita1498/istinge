@@ -594,7 +594,7 @@
         </li>
     @endif
 
-    @if(1==2)
+    @if(isset($_SESSION['permisos']['861']))
     <li class="nav-item" id="cronjobs">
         <a class="nav-link" data-toggle="collapse" href="#ui-cronjobs" aria-expanded="false" aria-controls="ui-cronjobs">
             <i class="menu-icon fas fa-user-secret"></i>
