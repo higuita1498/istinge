@@ -1117,11 +1117,12 @@
             }
 
             if ($("#reconexionGenerica").val() == 1) {
-                $titleswal = "¿Desea deshabilitar la reconexión genérica?";
+                $titleswal = "¿Desea deshabilitar el valor de reconexión genérica?";
             }
 
             Swal.fire({
                 title: $titleswal,
+                text: 'Configura los días y el valor para generar el cobro adicional sobre la factura del contrato, el sistema diariamente hará la revisión para agregarle a la última factura creada el cobro adicional si se pasa de los días.',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
