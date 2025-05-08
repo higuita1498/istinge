@@ -118,27 +118,32 @@
         e.preventDefault();
 
         let url = $('#url-enviar-lote').val();
-
-        // Puedes mostrar un loader o deshabilitar el botón
         $('#enviar-lote').prop('disabled', true).text('Enviando...');
+
+        // Iniciar temporizador de 90 segundos
+        const timeout = setTimeout(function() {
+            // alert('La operación tardó demasiado. Recargando la página...');
+            location.reload();
+        }, 90000); // 90,000 milisegundos = 1 minuto 30 segundos
 
         $.ajax({
             url: url,
             type: 'GET',
             success: function(response) {
-                // Aquí asumes que tu controlador devuelve algún JSON o HTML
-                alert('Envío exitoso: ' + response.message || 'Los mensajes se enviaron correctamente.');
+                clearTimeout(timeout); // Detener el timeout si responde a tiempo
+                alert(response.message || 'Los mensajes se enviaron correctamente.');
             },
             error: function(xhr, status, error) {
+                clearTimeout(timeout); // Detener el timeout si hay error
                 console.error(xhr.responseText);
                 alert('Ocurrió un error al enviar los mensajes.');
             },
             complete: function() {
-                // Restaurar botón
                 $('#enviar-lote').prop('disabled', false).text('Enviar WhatsApp');
             }
         });
     });
+
 
     $('#reiniciar-lote').on('click', function() {
         Swal.fire({
