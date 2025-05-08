@@ -4695,9 +4695,9 @@ class FacturasController extends Controller{
                 $empresa->cron_fecha_whatsapp = $request->fecha;
                 $empresa->save();
 
-                //ejecutamos la primera vez el cronjob para que el usuario pueda observar que si se hace el envio
-                $controller = new CronController();
-                $controller->envioFacturaWpp(new WapiService());
+                // //ejecutamos la primera vez el cronjob para que el usuario pueda observar que si se hace el envio
+                // $controller = new CronController();
+                // $controller->envioFacturaWpp(new WapiService());
             }
             return redirect('empresa/facturas/facturas-whatsapp-index')->with('success', 'Se ha guardado la fecha de envío de whatsapp correctamente');
         }else{
