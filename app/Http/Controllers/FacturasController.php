@@ -4713,11 +4713,30 @@ class FacturasController extends Controller{
         }
     }
 
-    public function facturasWhastappEnvio(Request $request){
+    public function facturasWhastappEnvio(Request $request)
+    {
+        try {
             $controller = new CronController();
             $controller->envioFacturaWpp(new WapiService());
-            return redirect('empresa/facturas/facturas-whatsapp-index')->with('success', 'Se ha enviado el mensaje de whatsapp a los clientes que no han pagado su factura');
+
+            if ($request->ajax()) {
+                return response()->json(['status' => 'success', 'message' => 'Mensajes enviados con éxito.']);
+            }
+
+            return redirect()->route('facturas.whatsapp.index')
+                ->with('success', 'Mensajes enviados con éxito.');
+        } catch (\Throwable $th) {
+            \Log::error('Error WhatsApp: ' . $th->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json(['status' => 'error', 'message' => 'Error al enviar mensajes.'], 500);
+            }
+
+            return redirect()->route('facturas.whatsapp.index')
+                ->with('error', 'Ocurrió un error al enviar mensajes.');
+        }
     }
+
 
 
     public function facturasWhastappReiniciar(Request $request){

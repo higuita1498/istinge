@@ -10,7 +10,8 @@
 </div>
 <script type="text/javascript">
     setTimeout(function() {
-        $('.alert').hide();
+        $('.alert-success').hide();
+        $('.alert-danger').hide();
         $('.active_table').attr('class', ' ');
     }, 20000);
 </script>
@@ -113,9 +114,30 @@
 
 @section('scripts')
 <script>
-    $('#enviar-lote').on('click', function() {
-        $('#form-reporte').attr('action', $("#url-enviar-lote").val());
-        $('#form-reporte').submit();
+    $('#enviar-lote').on('click', function(e) {
+        e.preventDefault();
+
+        let url = $('#url-enviar-lote').val();
+
+        // Puedes mostrar un loader o deshabilitar el botón
+        $('#enviar-lote').prop('disabled', true).text('Enviando...');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                // Aquí asumes que tu controlador devuelve algún JSON o HTML
+                alert('Envío exitoso: ' + response.message || 'Los mensajes se enviaron correctamente.');
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert('Ocurrió un error al enviar los mensajes.');
+            },
+            complete: function() {
+                // Restaurar botón
+                $('#enviar-lote').prop('disabled', false).text('Enviar WhatsApp');
+            }
+        });
     });
 
     $('#reiniciar-lote').on('click', function() {
