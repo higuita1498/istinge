@@ -13,7 +13,11 @@
 			<div class="row">
 				<div class="col-md-12">
 					<label>Fecha Factura<span class="text-danger">*</span></label>
+                    @if(isset($empresa->cron_fecha_whatsapp) && $empresa->cron_fecha_whatsapp != null)
+                    <input type="text" class="form-control" id="fecha" value="{{date('d-m-Y', strtotime($empresa->cron_fecha_whatsapp))}}" name="fecha" required="" >
+                    @else
 					<input type="text" class="form-control"  id="fecha" value="{{$request->fecha}}" name="fecha" required="" >
+                    @endif
 				</div>
 			</div>
 	  	</div>

@@ -4649,6 +4649,8 @@ class FacturasController extends Controller{
         view()->share(['seccion' => 'facturas', 'title' => 'Envío Whatsapp', 'icon' =>'fas fa-plus', 'subseccion' => 'venta']);
         $this->getAllPermissions(Auth::user()->id);
 
+        $empresa = Empresa::find(Auth::user()->empresa);
+
         if(!$request->dia){
             $dia = Carbon::now()->format('d');
         }
@@ -4684,7 +4686,7 @@ class FacturasController extends Controller{
         ->paginate();
 
         $request->fecha = Carbon::parse($request->fecha)->format('d-m-Y');
-        return view('cronjobs.envio-whatsapp', compact('request','facturas','grupos_corte','totalFaltantes'));
+        return view('cronjobs.envio-whatsapp', compact('request','facturas','grupos_corte','totalFaltantes','empresa'));
     }
 
     public function facturasWhastappSave(Request $request){
