@@ -148,7 +148,7 @@
     $('#reiniciar-lote').on('click', function() {
         Swal.fire({
         title: "¿Reiniciar envío de facturas?",
-        text: "Las facturas ya enviadas quedarán en estado 'No Enviadas'. (esto se hace con el fin de enviar de nuevo todas las facturas de una fecha especifica)",
+        text: "Las facturas ya enviadas el día " + $("#fecha").val() + " quedarán en estado 'No Enviadas'. (esto se hace con el fin de enviar de nuevo todas las facturas de una fecha especifica)",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
