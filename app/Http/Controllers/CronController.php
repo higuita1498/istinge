@@ -3174,8 +3174,8 @@ class CronController extends Controller
                     unlink($archivo);
                 }
             }
-                Log::info("Lote de facturas enviadas por whatsapp correctamente.");
-            }
+        }
+        Log::info("Lote de facturas enviadas por whatsapp correctamente.");
         }
     }
 
