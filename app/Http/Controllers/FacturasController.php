@@ -4705,13 +4705,29 @@ class FacturasController extends Controller{
                 $empresa->cron_fecha_whatsapp = $request->fecha;
                 $empresa->save();
 
-                // //ejecutamos la primera vez el cronjob para que el usuario pueda observar que si se hace el envio
-                // $controller = new CronController();
-                // $controller->envioFacturaWpp(new WapiService());
+
             }
             return redirect('empresa/facturas/facturas-whatsapp-index')->with('success', 'Se ha guardado la fecha de envío de whatsapp correctamente');
         }else{
             return redirect('empresa/facturas/facturas-whatsapp-index')->with('danger', 'No se ha podido guardar la fecha de envío de whatsapp');
         }
     }
+
+    public function facturasWhastappEnvio(Request $request){
+            $controller = new CronController();
+            $controller->envioFacturaWpp(new WapiService());
+            return redirect('empresa/facturas/facturas-whatsapp-index')->with('success', 'Se ha enviado el mensaje de whatsapp a los clientes que no han pagado su factura');
+    }
+
+
+    public function facturasWhastappReiniciar(Request $request){
+
+        if($request->fecha){
+            Factura::where('fecha',date('Y-m-d',strtotime($request->fecha)))->where('empresa',Auth::user()->empresa)->update(['whatsapp' => 0]);
+            return redirect('empresa/facturas/facturas-whatsapp-index')->with('success', 'Se ha reiniciado el envio de facturas de la fecha ' . $request->fecha);
+        }else{
+            return redirect('empresa/facturas/facturas-whatsapp-index')->with('danger', 'No se ha podido reiniciar el envio de facturas');
+        }
+    }
+
 }

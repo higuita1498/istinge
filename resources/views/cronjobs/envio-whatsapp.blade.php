@@ -4,9 +4,32 @@
 <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
 <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
 
+@if(Session::has('success'))
+<div class="alert alert-success">
+    {{Session::get('success')}}
+</div>
+<script type="text/javascript">
+    setTimeout(function() {
+        $('.alert').hide();
+        $('.active_table').attr('class', ' ');
+    }, 20000);
+</script>
+@endif
+
+@if(Session::has('danger'))
+<div class="alert alert-danger" >
+    {{Session::get('danger')}}
+</div>
+
+<script type="text/javascript">
+    setTimeout(function(){
+        $('.alert').hide();
+        $('.active_table').attr('class', ' ');
+    }, 20000);
+</script>
+@endif
+
 	<form id="form-reporte">
-
-
 	<div class="row card-description">
 
 	  	<div class="form-group col-md-4">
@@ -22,8 +45,10 @@
 			</div>
 	  	</div>
 
-	  	<div class="form-group col-md-4" style=" padding-top: 24px;">
+	  	<div class="form-group col-md-8" style=" padding-top: 24px;">
         	<button type="button" id="generar" class="btn btn-outline-primary">Guardar Configuración</button>
+            <button type="button" id="enviar-lote" class="btn btn-outline-info">Enviar lote de 45</button>
+            <button type="button" id="reiniciar-lote" class="btn btn-outline-danger">Reiniciar envío de facturas</button>
 	  	</div>
 	</div>
 
@@ -82,4 +107,33 @@
 </div>
 </form>
 <input type="hidden" id="urlgenerar" value="{{route('cronjob.whatsapp-facturas-save')}}">
+<input type="hidden" id="url-enviar-lote" value="{{route('cronjob.whatsapp-facturas-envio')}}">
+<input type="hidden" id="url-reiniciar-lote" value="{{route('cronjob.whatsapp-facturas-reiniciar')}}">
+@endsection
+
+@section('scripts')
+<script>
+    $('#enviar-lote').on('click', function() {
+        $('#form-reporte').attr('action', $("#url-enviar-lote").val());
+        $('#form-reporte').submit();
+    });
+
+    $('#reiniciar-lote').on('click', function() {
+        Swal.fire({
+        title: "¿Reiniciar envío de facturas?",
+        text: "Las facturas ya enviadas quedarán en estado 'No Enviadas'. (esto se hace con el fin de enviar de nuevo todas las facturas de una fecha especifica)",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Reiniciar',
+    }).then((result) => {
+        if (result.value) {
+            $('#form-reporte').attr('action', $("#url-reiniciar-lote").val());
+            $('#form-reporte').submit();
+        }
+    })
+    });
+</script>
 @endsection
