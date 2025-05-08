@@ -4663,7 +4663,7 @@ class FacturasController extends Controller{
         }
 
         if(isset($empresa->cron_fecha_whatsapp) && $empresa->cron_fecha_whatsapp != null){
-            $request->dia = Carbon::parse($empresa->cron_fecha_whatsapp)->format('d');
+            $request->dia = $dia = Carbon::parse($empresa->cron_fecha_whatsapp)->format('d');
             $request->fecha = Carbon::parse($empresa->cron_fecha_whatsapp)->format('Y-m-d');
 
             $empresa->cron_fecha_whatsapp = $request->fecha;
@@ -4681,7 +4681,7 @@ class FacturasController extends Controller{
         ->join('grupos_corte as gc','gc.id','=','c.grupo_corte')
         ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',$request->fecha)
         ->where('factura.whatsapp',0)
-        ->whereIn('c.grupo_corte',$grupos_corte_array)
+        // ->whereIn('c.grupo_corte',$grupos_corte_array)
         ->select('factura.*', 'gc.nombre as grupoNombre')->count('factura.id');
 
         $facturas = Factura::
