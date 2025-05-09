@@ -331,14 +331,17 @@ class IngresosController extends Controller
             $empresa = Empresa::Find($user->empresa);
 
             // Verificamos si la suma es mayor que 0
-            $sumaPrecios = collect($request->precio)
-            ->map(fn($precio) => floatval($precio))
-            ->sum();
+            if($request->anticipo == 1){
+                $sumaPrecios = $request->valor_recibido;
+            }else{
+                $sumaPrecios = collect($request->precio)
+                ->map(fn($precio) => floatval($precio))
+                ->sum();
+            }
 
             if ($sumaPrecios <= 0) {
             return back()->with('danger', 'La suma de los precios no puede ser 0.')->withInput();
             }
-
 
             //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
             if($request->realizar == 2){
