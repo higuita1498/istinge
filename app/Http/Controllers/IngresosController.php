@@ -343,6 +343,25 @@ class IngresosController extends Controller
             return back()->with('danger', 'La suma de los precios no puede ser 0.')->withInput();
             }
 
+            //store: prorrateo Validaciones de opciones radiobutton
+            if(isset($request->tipo_electronica) && $request->tipo_electronica == 4 && $request->realizar == 1){
+                $conteo = count(array_filter($request->precio, function ($item) {
+                    return !is_null($item) && is_numeric($item); // opcionalmente, solo números válidos
+                }));
+                if($conteo > 1){
+                    return back()->with('danger', 'No puedes realizar prorrateo al seleccionar mas de una factura.')->withInput();
+                }
+
+                foreach ($request->factura_pendiente as $key => $value) {
+                    if ($request->precio[$key]) {
+                        $contrato = DB::table('facturas_contratos as fc')->where('factura_id', $value)->first();
+                        if(!$contrato){
+                            return back()->with('danger', 'La factura a la cual le asociaste un pago no tiene un contrato asociado.')->withInput();
+                        }
+                    }
+                }
+            }
+
             //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
             if($request->realizar == 2){
                 //Cuando se realiza el ingreso por categoría.
@@ -403,7 +422,8 @@ class IngresosController extends Controller
                         }
 
                         //Conversión de factura estandar a factura electrónica.
-                        if(isset($request->tipo_electronica) && $request->tipo_electronica != 5){
+                        if(isset($request->tipo_electronica) && $request->tipo_electronica == 1 ||
+                           isset($request->tipo_electronica) && $request->tipo_electronica == 2){
                             //primero recuperamos
                             $nro=NumeracionFactura::where('empresa',$empresa->id)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
                             $inicio = $nro->inicio;
@@ -434,6 +454,7 @@ class IngresosController extends Controller
                             }
                         }
                     }
+
                 }else {
                         $mensaje='No hay facturas pendientes seleccionadas.';
                         return back()->with('danger', $mensaje)->withInput();
@@ -496,179 +517,185 @@ class IngresosController extends Controller
             $ingreso->comprobante_pago = $request->comprobante_pago;
             $ingreso->save();
 
-                //Si el tipo de ingreso es de facturas
-                $totalIngreso=0;
-                if ($ingreso->tipo == 1) {
-                    $saldoFavorUsado = 0;
-                    foreach ($request->factura_pendiente as $key => $value) {
-                        if ($request->precio[$key]) {
-                            $totalIngreso+=$precio = $this->precision($request->precio[$key]);
-                            $factura = Factura::find($request->factura_pendiente[$key]);
 
-                            /*
-                            vamos a sumar el total del anticipo usado sobre una factura
-                            (este se aplica cuando se crea la factura de venta en una forma de pago)
-                            */
-                            $saldoFavorUsado+=$factura->saldoFavorUsado();
 
-                            $retencion = 'fact' . $factura->id . '_retencion';
-                            $precio_reten = 'fact' . $factura->id . '_precio_reten';
-                            if ($request->$retencion) {
-                                foreach ($request->$retencion as $key2 => $value2) {
-                                    if ($request->$precio_reten[$key2]) {
-                                        $retencion = Retencion::where('id', $value2)->first();
-                                        $items = new IngresosRetenciones;
-                                        $items->ingreso = $ingreso->id;
-                                        $items->factura = $factura->id;
-                                        $items->valor = $this->precision($request->$precio_reten[$key2]);
-                                        $precio += $this->precision($request->$precio_reten[$key2]);
-                                        $items->retencion = $retencion->porcentaje;
-                                        $items->id_retencion = $retencion->id;
-                                        $items->save();
-                                    }
+            //Si el tipo de ingreso es de facturas
+            $totalIngreso=0;
+            if ($ingreso->tipo == 1) {
+                $saldoFavorUsado = 0;
+                foreach ($request->factura_pendiente as $key => $value) {
+                    if ($request->precio[$key]) {
+                        $totalIngreso+=$precio = $this->precision($request->precio[$key]);
+                        $factura = Factura::find($request->factura_pendiente[$key]);
+
+                        /*
+                        vamos a sumar el total del anticipo usado sobre una factura
+                        (este se aplica cuando se crea la factura de venta en una forma de pago)
+                        */
+                        $saldoFavorUsado+=$factura->saldoFavorUsado();
+
+                        $retencion = 'fact' . $factura->id . '_retencion';
+                        $precio_reten = 'fact' . $factura->id . '_precio_reten';
+                        if ($request->$retencion) {
+                            foreach ($request->$retencion as $key2 => $value2) {
+                                if ($request->$precio_reten[$key2]) {
+                                    $retencion = Retencion::where('id', $value2)->first();
+                                    $items = new IngresosRetenciones;
+                                    $items->ingreso = $ingreso->id;
+                                    $items->factura = $factura->id;
+                                    $items->valor = $this->precision($request->$precio_reten[$key2]);
+                                    $precio += $this->precision($request->$precio_reten[$key2]);
+                                    $items->retencion = $retencion->porcentaje;
+                                    $items->id_retencion = $retencion->id;
+                                    $items->save();
                                 }
                             }
+                        }
 
-                            $items = new IngresosFactura;
-                            $items->ingreso = $ingreso->id;
-                            $items->factura = $factura->id;
-                            $items->pagado = $precio; //asi exista mas dinero del  pagado ese se debe usar.
-                            $items->puc_factura = $factura->cuenta_id;
-                            $items->puc_banco = $request->saldofavor > 0 ? $request->forma_pago : $request->forma_pago;
-                            $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
+                        $items = new IngresosFactura;
+                        $items->ingreso = $ingreso->id;
+                        $items->factura = $factura->id;
+                        $items->pagado = $precio; //asi exista mas dinero del  pagado ese se debe usar.
+                        $items->puc_factura = $factura->cuenta_id;
+                        $items->puc_banco = $request->saldofavor > 0 ? $request->forma_pago : $request->forma_pago;
+                        $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
 
-                            /*
-                            Validacion cuando se recibe un valor mayor a la factura. entonces guardamos
-                            sobre el total de la factura por que el resto es saldo a favor.
-                            */
-                            if($factura->total()->total < $request->precio[$key]){
-                                // $items->pago = $factura->total()->total; ya no se desea asi, ahora quieren que aparezca el total asi sobrepase
-                                $items->pago = $this->precision($request->precio[$key]);
-                                $factura->estatus = 0;
-                                $factura->save();
-                            }else{
-                                $items->pago=$this->precision($request->precio[$key]);
+                        /*
+                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos
+                        sobre el total de la factura por que el resto es saldo a favor.
+                        */
+                        if($factura->total()->total < $request->precio[$key]){
+                            // $items->pago = $factura->total()->total; ya no se desea asi, ahora quieren que aparezca el total asi sobrepase
+                            $items->pago = $this->precision($request->precio[$key]);
+                            $factura->estatus = 0;
+                            $factura->save();
+                        }else{
+                            $items->pago=$this->precision($request->precio[$key]);
+                        }
+
+                        if ($this->precision($precio) == $this->precision($factura->porpagar())) {
+                            $factura->estatus = 0;
+                            $factura->save();
+
+                            CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+
+                            $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                            foreach ($crms as $crm) {
+                                $crm->delete();
                             }
+                        }
 
-                            if ($this->precision($precio) == $this->precision($factura->porpagar())) {
-                                $factura->estatus = 0;
-                                $factura->save();
+                        $items->save();
 
-                                CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+                        $contrato = Contrato::where('id',$factura->contrato_id)->first();
 
-                                $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
-                                foreach ($crms as $crm) {
-                                    $crm->delete();
-                                }
+                        //store: prorrateo Aplicacion de posible
+                        if(isset($request->tipo_electronica) && $request->tipo_electronica == 4){
+                            $this->createFacturaProrrateo($contrato);
+                        }
+
+                        /* * * API MK * * */
+                        if(!$contrato){
+                            $db_contrato = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
+                            if($db_contrato){
+                                $contrato = Contrato::where('nro',$db_contrato->contrato_nro)->first();
                             }
+                        }
 
-                            $items->save();
+                        $cliente = $factura->cliente();
 
-                             /* * * API MK * * */
-
-                            $contrato = Contrato::where('id',$factura->contrato_id)->first();
-                            if(!$contrato){
-                                $db_contrato = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
-                                if($db_contrato){
-                                    $contrato = Contrato::where('nro',$db_contrato->contrato_nro)->first();
-                                }
-                            }
-
-                            $cliente = $factura->cliente();
-
-                             if($contrato){
-                                 $contrato->state = "enabled";
-                                 $contrato->save();
-                             }
-                             if(!$contrato){
-                                 $contrato = Contrato::where('client_id', $cliente->id)->first();
-                                 if($contrato){
-                                     $contrato->state = "enabled";
-                                     $contrato->save();
-                                 }
-                             }
-
+                        if($contrato){
+                            $contrato->state = "enabled";
+                            $contrato->save();
+                        }
+                        if(!$contrato){
+                            $contrato = Contrato::where('client_id', $cliente->id)->first();
                             if($contrato){
-                                $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+                                $contrato->state = "enabled";
+                                $contrato->save();
+                            }
+                        }
 
-                                if ($asignacion) {
-                                    $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
-                                    $asignacion->cuotas_pendientes = $cuotas_pendientes;
-                                    if ($cuotas_pendientes == 0) {
-                                        $asignacion->status = 1;
-                                    }
-                                    $asignacion->save();
+                        if($contrato){
+                            $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                            if ($asignacion) {
+                                $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                                $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                                if ($cuotas_pendientes == 0) {
+                                    $asignacion->status = 1;
                                 }
-
-                                if($contrato->server_configuration_id){
-                                    $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-
-                                    $API = new RouterosAPI();
-                                    $API->port = $mikrotik->puerto_api;
-
-                                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                                        $API->write('/ip/firewall/address-list/print', TRUE);
-                                        $ARRAYS = $API->read();
-
-                                        #ELIMINAMOS DE MOROSOS#
-                                        $API->write('/ip/firewall/address-list/print', false);
-                                        $API->write('?address='.$contrato->ip, false);
-                                        $API->write("?list=morosos",false);
-                                        $API->write('=.proplist=.id');
-                                        $ARRAYS = $API->read();
-
-                                        if(count($ARRAYS)>0){
-                                            $API->write('/ip/firewall/address-list/remove', false);
-                                            $API->write('=.id='.$ARRAYS[0]['.id']);
-                                            $READ = $API->read();
-                                        }
-                                        #ELIMINAMOS DE MOROSOS#
-
-                                        #AGREGAMOS A IP_AUTORIZADAS#
-                                        $API->comm("/ip/firewall/address-list/add", array(
-                                            "address" => $contrato->ip,
-                                            "list" => 'ips_autorizadas'
-                                            )
-                                        );
-                                        #AGREGAMOS A IP_AUTORIZADAS#
-
-                                        $API->disconnect();
-
-                                        $contrato->state = 'enabled';
-                                        $contrato->save();
-                                    }
-                                }
+                                $asignacion->save();
                             }
 
-                            /* * * API MK * * */
+                            if($contrato->server_configuration_id){
+                                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
-                            /* * * API CATV * * */
-                            if($contrato->olt_sn_mac != null && $empresa->adminOLT != null){
+                                $API = new RouterosAPI();
+                                $API->port = $mikrotik->puerto_api;
 
-                                $curl = curl_init();
-                                curl_setopt_array($curl, array(
-                                    CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_ENCODING => '',
-                                    CURLOPT_MAXREDIRS => 10,
-                                    CURLOPT_TIMEOUT => 0,
-                                    CURLOPT_FOLLOWLOCATION => true,
-                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST => 'POST',
-                                    CURLOPT_HTTPHEADER => array(
-                                        'X-token: '.$empresa->smartOLT
-                                    ),
-                                    ));
+                                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                    $API->write('/ip/firewall/address-list/print', TRUE);
+                                    $ARRAYS = $API->read();
 
-                                $response = curl_exec($curl);
-                                $response = json_decode($response);
+                                    #ELIMINAMOS DE MOROSOS#
+                                    $API->write('/ip/firewall/address-list/print', false);
+                                    $API->write('?address='.$contrato->ip, false);
+                                    $API->write("?list=morosos",false);
+                                    $API->write('=.proplist=.id');
+                                    $ARRAYS = $API->read();
 
-                                if(isset($response->status) && $response->status == true){
-                                    $contrato->state_olt_catv = 1;
+                                    if(count($ARRAYS)>0){
+                                        $API->write('/ip/firewall/address-list/remove', false);
+                                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                                        $READ = $API->read();
+                                    }
+                                    #ELIMINAMOS DE MOROSOS#
+
+                                    #AGREGAMOS A IP_AUTORIZADAS#
+                                    $API->comm("/ip/firewall/address-list/add", array(
+                                        "address" => $contrato->ip,
+                                        "list" => 'ips_autorizadas'
+                                        )
+                                    );
+                                    #AGREGAMOS A IP_AUTORIZADAS#
+
+                                    $API->disconnect();
+
+                                    $contrato->state = 'enabled';
                                     $contrato->save();
                                 }
                             }
-                            /* * * API CATV * * */
+                        }
+                        /* * * API MK * * */
+
+                        /* * * API CATV * * */
+                        if($contrato->olt_sn_mac != null && $empresa->adminOLT != null){
+
+                            $curl = curl_init();
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                CURLOPT_HTTPHEADER => array(
+                                    'X-token: '.$empresa->smartOLT
+                                ),
+                                ));
+
+                            $response = curl_exec($curl);
+                            $response = json_decode($response);
+
+                            if(isset($response->status) && $response->status == true){
+                                $contrato->state_olt_catv = 1;
+                                $contrato->save();
+                            }
+                        }
+                        /* * * API CATV * * */
 
                         }
                     }

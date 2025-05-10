@@ -3058,14 +3058,9 @@ class CronController extends Controller
 
     public function envioFacturaWpp(WapiService $wapiService){
 
-        if(getdate()['mday'] == 01){
-            $dia = 1;
-        }else $dia = getdate()['mday'];
-
         $empresa = Empresa::Find(1);
         if($empresa->cron_fecha_whatsapp != null){
             $fecha = $empresa->cron_fecha_whatsapp;
-            $dia = (int) Carbon::parse($fecha)->format('d');
         }else{
             $fecha = date('Y-m-d');
         }
@@ -3082,7 +3077,7 @@ class CronController extends Controller
 
         $empresa = Empresa::Find(1);
 
-        $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',$dia)->get();
+        $grupos_corte = GrupoCorte::where('status', 1)->get();
 
         if($grupos_corte->count() > 0){
 
