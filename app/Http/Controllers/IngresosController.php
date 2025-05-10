@@ -354,7 +354,7 @@ class IngresosController extends Controller
 
                 foreach ($request->factura_pendiente as $key => $value) {
                     if ($request->precio[$key]) {
-                        $contrato = DB::table('facturas_contratos as fc')->where('factura_id', $value)->first();
+                        $contrato = Contrato::join('facturas_contratos as fc','fc.contrato_nro','contracts.nro')->where('factura_id', $value)->first();
                         if(!$contrato){
                             return back()->with('danger', 'La factura a la cual le asociaste un pago no tiene un contrato asociado.')->withInput();
                         }
@@ -517,8 +517,6 @@ class IngresosController extends Controller
             $ingreso->comprobante_pago = $request->comprobante_pago;
             $ingreso->save();
 
-
-
             //Si el tipo de ingreso es de facturas
             $totalIngreso=0;
             if ($ingreso->tipo == 1) {
@@ -588,10 +586,17 @@ class IngresosController extends Controller
                         $items->save();
 
                         $contrato = Contrato::where('id',$factura->contrato_id)->first();
+                        if(!$contrato){
+                            $contrato = Contrato::join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+                                ->where('fc.factura_id', $factura->id)
+                                ->select('contracts.*')
+                                ->first();
+                        }
 
                         //store: prorrateo Aplicacion de posible
                         if(isset($request->tipo_electronica) && $request->tipo_electronica == 4){
-                            $this->createFacturaProrrateo($contrato);
+                            $facturaInicio = 1; //Esta opcion me permite crear la factura con prorrateo desde le dia que se creo la factura
+                            $this->createFacturaProrrateo($contrato, $facturaInicio);
                         }
 
                         /* * * API MK * * */
@@ -1198,7 +1203,7 @@ class IngresosController extends Controller
 
         //sumo a las numeraciones el recibo
         $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
-        // dd($ingreso,$request);
+
         $ingreso->empresa = Auth::user()->empresa;
         $ingreso->cliente = $request->cliente;
         $ingreso->cuenta = $request->cuenta;

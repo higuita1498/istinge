@@ -1412,7 +1412,7 @@ public function forma_pago()
         }
     }
 
-    public function diasCobradosProrrateo($forzar_prorrateo = null){
+    public function diasCobradosProrrateo($forzar_prorrateo = null, $facturaInicio = null){
 
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
         where('contracts.id',$this->contrato_id)
@@ -1503,6 +1503,7 @@ public function forma_pago()
             $inicioCorte = $fechaInicio->addDay();
         }
 
+
         $fechaFin    = Carbon::parse($fechaFin);
 
         /* Validacion de mes anticipado o mes vencido */
@@ -1515,7 +1516,6 @@ public function forma_pago()
         $inicioCorte = Carbon::parse($inicioCorte)->toFormattedDateString();
 
         $mensaje = "";
-
         //Primero analizamos si es la primer factura del contrato que vamos a generar
         if($this->contrato_id != null){
 
@@ -1526,9 +1526,9 @@ public function forma_pago()
             los primeros dias de uso dependiendo de la creacion del contrato
             también debemos tener la opción de prorrateo activa en el menú de configuración.
             */
-
             if($factura->id == $this->id && $empresa->prorrateo == 1 ||
                 $factura->id == $this->id && $forzar_prorrateo == 1){
+
 
                 //Buscamos el contrato al que esta asociada la factura
                 $contrato = Contrato::find($this->contrato_id);
@@ -1592,9 +1592,15 @@ public function forma_pago()
                 if($diasCobrados > 30 && $diasdeMas==0){$diasCobrados=30;}
                 $diasCobrados=$diasCobrados;
             }else{
+
+                //Validamos si viene desde ingreso la factura
+                if($facturaInicio != null){
+                    $fechaInicio = Carbon::parse($this->fecha);
+                }
                 //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
                 $diasCobrados = $fechaInicio->diffInDays($fechaFin);
                 $diasCobrados++;
+
                 if($diasCobrados == 0){return 30;}
                 if($diasCobrados >= 27){$diasCobrados=30;}
                 $diasCobrados=$diasCobrados;

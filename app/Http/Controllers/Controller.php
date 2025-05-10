@@ -2329,7 +2329,7 @@ if ($mikrotik) {
         );
     }
 
-    public static function createFacturaProrrateo($contrato){
+    public static function createFacturaProrrateo($contrato, $facturaInicio = null){
 
         $grupo_corte = GrupoCorte::find($contrato->grupo_corte);
         $fecha = Carbon::now()->format('Y-m-d');
@@ -2517,13 +2517,19 @@ if ($mikrotik) {
         ]);
 
         //>>>>Posible aplicación de Prorrateo al total<<<<//
-        $dias = $factura->diasCobradosProrrateo(1); //forzamos el prorrateo asi laopcion de empresa este off
+        $dias = $factura->diasCobradosProrrateo(1,$facturaInicio); //forzamos el prorrateo asi la opcion de empresa este off
         //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
         if($dias != 30){
 
-            DB::table('factura')->where('id',$factura->id)->update([
-                'prorrateo_aplicado' => 1
-            ]);
+            if($facturaInicio != null){
+                DB::table('factura')->where('id',$factura->id)->update([
+                    'prorrateo_aplicado' => 2
+                ]);
+            }else{
+                DB::table('factura')->where('id',$factura->id)->update([
+                    'prorrateo_aplicado' => 1
+                ]);
+            }
 
             //si no se nombra la variable en la primer guardada se genera una copia
             foreach($factura->itemsFactura as $item){
@@ -2531,11 +2537,10 @@ if ($mikrotik) {
                 $precioItemProrrateo = round($item->precio * $dias / 30, 2);
                 DB::table('items_factura')->where('id',$item->id)->update([
                     'precio' => $precioItemProrrateo
-                    ]);
+                ]);
             }
         }
         //>>>>Fin posible aplicación prorrateo al total<<<<//
-
         return true;
     }
 
