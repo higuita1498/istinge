@@ -690,6 +690,14 @@ class ContratosController extends Controller
                     $nro_contrato++;
                 }
 
+                $contratoMk = Contrato::where('server_configuration_id', $request->server_configuration_id)
+                ->orderBy('nro', 'desc')
+                ->first();
+
+                if($contratoMk){
+                    $nro_contrato = $contratoMk->nro + 1;
+                }
+
                 $rate_limit = '';
                 $priority        = $plan->prioridad;
                 $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : 0;
