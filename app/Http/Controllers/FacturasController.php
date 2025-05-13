@@ -290,8 +290,9 @@ class FacturasController extends Controller{
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
         $barrios = DB::table('barrios')->orderBy('nombre', 'asc')->get();
+        $grupos_corte = GrupoCorte::where('empresa', $empresaActual)->where('status',1)->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios','servidores','barrios'));
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios','servidores','barrios','grupos_corte'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -306,8 +307,9 @@ class FacturasController extends Controller{
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
         $barrios = DB::table('barrios')->orderBy('nombre', 'asc')->get();
+        $grupos_corte = GrupoCorte::where('empresa', $empresaActual)->where('status',1)->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios', 'servidores','barrios'));
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios', 'servidores','barrios','grupos_corte'));
     }
 
     /*
@@ -328,6 +330,7 @@ class FacturasController extends Controller{
 
         $userServer = $user->servidores->pluck('id')->toArray();
         $servidores = Mikrotik::where('empresa', $empresaActual)->whereIn('id',$userServer)->get();
+        $grupos_corte = GrupoCorte::where('empresa', $empresaActual)->where('status',1)->get();
 
         $numeracionActual = NumeracionFactura::
         where('nomina',0)->where('num_equivalente',0)
@@ -337,7 +340,7 @@ class FacturasController extends Controller{
         ->first();
 
         view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta-electronica']);
-        return view('facturas-electronica.index', compact('clientes', 'municipios', 'tabla','servidores'));
+        return view('facturas-electronica.index', compact('clientes', 'municipios', 'tabla','servidores','grupos_corte'));
     }
 
     /*
@@ -506,6 +509,11 @@ class FacturasController extends Controller{
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('cs1.server_configuration_id', $request->servidor);
             });
+            }
+            if($request->grupos_corte){
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhereIn('cs1.grupo_corte', $request->grupos_corte);
+                });
             }
             if($request->emision != null){
                 $facturas->where(function ($query) use ($request) {
@@ -765,6 +773,11 @@ class FacturasController extends Controller{
             if($request->state_contrato){
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('cs1.state', $request->state_contrato);
+                });
+            }
+            if($request->grupos_corte){
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhereIn('cs1.grupo_corte', $request->grupos_corte);
                 });
             }
             if($request->municipio){

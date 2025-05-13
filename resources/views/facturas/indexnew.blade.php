@@ -139,6 +139,13 @@
 								<option value="2">Anuladas</option>
 							</select>
 						</div>
+                        <div class="col-md-2 pl-1 pt-1">
+							<select title="Grupo Corte" class="form-control rounded selectpicker" name="grupos_corte" id="grupos_corte" multiple data-live-search="true">
+                                @foreach($grupos_corte as $grupo)
+                                    <option value="{{$grupo->id}}">{{$grupo->nombre}}</option>
+                                @endforeach
+							</select>
+						</div>
 						<div class="col-md-2 pl-1 pt-1 d-none">
 							<select title="Enviada a Correo" class="form-control rounded selectpicker" id="correo">
 								<option value="1">Si</option>
@@ -508,6 +515,7 @@
 			data.servidor = $('#servidor').val();
 			data.estado = $('#estado').val();
 			data.state_contrato = $('#state_contrato').val();
+			data.grupos_corte = $('#grupos_corte').val();
 			data.filtro = true;
 		});
 
@@ -530,7 +538,7 @@
             }
         });
 
-        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento, #barrio, #state_contrato').on('change',function() {
+        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento, #barrio, #state_contrato, #grupos_corte').on('change',function() {
             getDataTable();
             return false;
         });
@@ -720,6 +728,7 @@
 		$('#comparador').val('').selectpicker('refresh');
 		$('#total').val('');
 		$('#estado').val('').selectpicker('refresh');
+		$('#grupos_corte').val('').selectpicker('refresh');
 		$('#state_contrato').val('').selectpicker('refresh');
 		$('#servidor').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
@@ -729,7 +738,7 @@
 
 	function exportar() {
 		$("#estado").selectpicker('refresh');
-        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&barrio='+$('#barrio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&state_contrato='+$('#state_contrato').val()+'&tipo=1';
+        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&barrio='+$('#barrio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&grupos_corte='+$('#grupos_corte').val()+'&state_contrato='+$('#state_contrato').val()+'&tipo=1';
 	}
 
 	@if($tipo)

@@ -123,6 +123,13 @@
 								<option value="2">Error emisión</option>
 							</select>
 						</div>
+                        <div class="col-md-2 pl-1 pt-1">
+							<select title="Grupo Corte" class="form-control rounded selectpicker" name="grupos_corte" id="grupos_corte" multiple data-live-search="true">
+                                @foreach($grupos_corte as $grupo)
+                                    <option value="{{$grupo->id}}">{{$grupo->nombre}}</option>
+                                @endforeach
+							</select>
+						</div>
 						<div class="col-md-2 pl-1 pt-1 d-none">
 							<select title="Enviada a Correo" class="form-control rounded selectpicker" id="correo">
 								<option value="1">Si</option>
@@ -277,6 +284,7 @@
 			data.total = $('#total').val();
 			data.servidor = $('#servidor').val();
 			data.estado = $('#estado').val();
+			data.grupos_corte = $('#grupos_corte').val();
 			data.emision = $('#emision').val();
 			data.filtro = true;
 		});
@@ -300,7 +308,7 @@
             }
         });
 
-        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento').on('change',function() {
+        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento, #grupos_corte').on('change',function() {
             getDataTable();
             return false;
         });
@@ -426,6 +434,7 @@
 		$('#comparador').val('').selectpicker('refresh');
 		$('#total').val('');
 		$('#estado').val('').selectpicker('refresh');
+		$('#grupos_corte').val('').selectpicker('refresh');
 		$('#servidor').val('').selectpicker('refresh');
 		$('#emision').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
@@ -435,7 +444,7 @@
 
 	function exportar() {
 		$("#estado").selectpicker('refresh');
-        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=2';
+        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&grupos_corte='+$('#grupos_corte').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=2';
 	}
 </script>
 @endsection
