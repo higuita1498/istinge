@@ -668,6 +668,7 @@ class ContratosController extends Controller
         $empresa = Empresa::Find(Auth::user()->empresa);
         $cliente = Contacto::find($request->client_id);
         $servicio = $cliente->nombre.' '.$cliente->apellido1.' '.$cliente->apellido2;
+        $empresa = Empresa::Find(Auth::user()->empresa);
 
         if ($mikrotik) {
             $API = new RouterosAPI();
@@ -680,22 +681,24 @@ class ContratosController extends Controller
 
                 $nro = Numeracion::where('empresa', 1)->first();
 
-                $nro_contrato = $nro->contrato;
+                if(isset($empresa->separar_numeracion) && $empresa->separar_numeracion == 1){
+                    $contratoMk = Contrato::where('server_configuration_id', $request->server_configuration_id)
+                    ->orderBy('nro', 'desc')
+                    ->first();
 
-                while (true) {
-                    $numero = Contrato::where('nro', $nro_contrato)->count();
-                    if ($numero == 0) {
-                        break;
+                    if($contratoMk){
+                        $nro_contrato = $contratoMk->nro + 1;
                     }
-                    $nro_contrato++;
-                }
+                }else{
+                    $nro_contrato = $nro->contrato;
 
-                $contratoMk = Contrato::where('server_configuration_id', $request->server_configuration_id)
-                ->orderBy('nro', 'desc')
-                ->first();
-
-                if($contratoMk){
-                    $nro_contrato = $contratoMk->nro + 1;
+                    while (true) {
+                        $numero = Contrato::where('nro', $nro_contrato)->count();
+                        if ($numero == 0) {
+                            break;
+                        }
+                        $nro_contrato++;
+                    }
                 }
 
                 $rate_limit = '';
