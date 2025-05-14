@@ -272,6 +272,9 @@
                 @if (isset($_SESSION['permisos']['759']))
                     <a href="#" data-toggle="modal" data-target="#config_olt">Configurar OLT</a><br>
                 @endif
+                    <a href="javascript:chatIA()">{{ Auth::user()->empresa()->chat_ia == 0 ? 'Habilitar':'Deshabilitar' }} Chat IA</a><br>
+			        <input type="hidden" id="chat_ia" value="{{Auth::user()->empresa()->chat_ia}}">
+
             </div>
         @endif
 
@@ -935,6 +938,66 @@
 		        }
 		    })
 		}
+
+        function chatIA(){
+            if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/configuracion_chat_ia';
+			}else{
+				var url = '/configuracion_chat_ia';
+			}
+
+		    if ($("#chat_ia").val() == 0) {
+		        $titleswal = "¿Desea habilitar el chat IA?";
+		    }
+
+		    if ($("#factura_contrato_off").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar el chat IA?";
+		    }
+
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { chat_ia: $("#chat_ia").val() },
+		                success: function (data) {
+		                    if (data.status == 200) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Chat IA habilitado correctamente',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#chat_ia").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Chat IA Deshabilitado correctamente',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#chat_ia").val(0);
+		                    }
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = window.location.pathname;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
+
+		        }
+		    })
+        }
 
         function storePeriodoFacturacion() {
             cargando(true);

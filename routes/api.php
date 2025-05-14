@@ -228,22 +228,51 @@ Route::get('NotaCreditoElectronica/{id}', function ($id) {
  });
 
 
-Route::get('deudacontrato/{contro_nro}', function ($contro_nro) {
-    $contrato = Contrato::where('nro' , $contro_nro)->first();
-    if($contrato){
-        $deuda = "$" . App\Funcion::Parsear($contrato->deudaFacturas());
+ Route::get('deudacontrato', function (Request $request) {
 
-        return response()->json(['data' => $deuda, 'status' => 200]);
-    }else{
-        return response()->json(['status' => 400, 'message' => 'No se encontraron datos']);
+    if(isset($request->contrato_nro)){
+        $contrato = Contrato::where('nro' , $request->contrato_nro)->first();
+        if($contrato){
+
+            $deuda = "$" . App\Funcion::Parsear($contrato->deudaFacturas());
+            $contrato->deuda = $deuda;
+
+            return response()->json(['data' => $contrato, 'status' => 200, 'multicontratos' => false]);
+        }else{
+            return response()->json(['status' => 400, 'message' => 'No se encontraron datos']);
+        }
     }
-});
 
+    if(isset($request->identificacion)){
+
+        $cliente = Contacto::where('nit',$request->identificacion)->first();
+        if($cliente){
+            $contratos = Contrato::where('client_id' , $cliente->id)->get();
+
+            if(count($contratos) == 0){
+                return response()->json(['status' => 400, 'message' => 'No se encontraron datos']);
+            }
+
+            if(count($contratos) > 1){
+                return response()->json(['data' => $contratos, 'status' => 200, 'multicontratos' => true]);
+            }else{
+                $contrato = $contratos->first();
+                $deuda = "$" . App\Funcion::Parsear($contrato->deudaFacturas());
+                $contrato->deuda = $deuda;
+
+                return response()->json(['data' => $contrato, 'status' => 200, 'multicontratos' => false]);
+
+            }
+        }else{
+            return response()->json(['status' => 400, 'message' => 'No se encontraron clientes con esa cédula']);
+        }
+    }
+
+});
 Route::get('medios-pago', function (Request $request) {
     $empresa = Empresa::Find(1);
     return response()->json(['data' => $empresa->medios_pago, 'status' => 200]);
 });
-
 
 Route::get('tipos-servicio', function (Request $request) {
     $servicios = Servicio::where('estatus', 1)->get();

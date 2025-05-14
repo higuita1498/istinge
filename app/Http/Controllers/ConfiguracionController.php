@@ -2532,4 +2532,8 @@ class ConfiguracionController extends Controller
         return redirect('empresa/configuracion/numeraciones-equivalente')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
     }
 
+    public function chatIA(){
+
+    }
+
 }
