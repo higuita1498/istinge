@@ -66,7 +66,7 @@
                 @endif
                 @if($sinTelefono > 0)
                 <strong>></strong> Hay un total de <strong> {{ $sinTelefono }}</strong> facturas sin número celular registrado.<br>
-                @else
+                @endif
                 @if(Auth::user()->empresa()->cron_fecha_whatsapp != null)
                 <strong>></strong> La fecha de envío configurada actualmente es: <strong>{{ date('d-m-Y', strtotime(Auth::user()->empresa()->cron_fecha_whatsapp)) }}</strong>
                 @endif
