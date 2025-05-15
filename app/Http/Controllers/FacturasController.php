@@ -4692,7 +4692,7 @@ class FacturasController extends Controller{
         $totalFaltantes = Factura::
         join('contracts as c','c.id','=','factura.contrato_id')
         ->join('grupos_corte as gc','gc.id','=','c.grupo_corte')
-        ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',$request->fecha)
+        ->where('factura.fecha',$request->fecha)
         ->where('factura.whatsapp',0)
         // ->whereIn('c.grupo_corte',$grupos_corte_array)
         ->select('factura.*', 'gc.nombre as grupoNombre')->count('factura.id');
@@ -4700,14 +4700,27 @@ class FacturasController extends Controller{
         $facturas = Factura::
         join('contracts as c','c.id','=','factura.contrato_id')
         ->join('grupos_corte as gc','gc.id','=','c.grupo_corte')
-        ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',$request->fecha)
+        ->where('factura.fecha',$request->fecha)
         ->where('factura.whatsapp',0)
         ->whereIn('c.grupo_corte',$grupos_corte_array)
         ->select('factura.*', 'gc.nombre as grupoNombre')
         ->paginate();
 
+        $sinTelefono = Factura::
+            join('contracts as c', 'c.id', '=', 'factura.contrato_id')
+            ->join('contactos as con', 'con.id', 'c.client_id')
+            ->where(function ($query) {
+                $query->whereNull('con.celular')
+                      ->orWhereNull('con.telefono1');
+            })
+            ->where('factura.fecha', $request->fecha)
+            ->where('factura.whatsapp', 0)
+            ->whereIn('c.grupo_corte', $grupos_corte_array)
+            ->select('factura.*')
+            ->count();
+
         $request->fecha = Carbon::parse($request->fecha)->format('d-m-Y');
-        return view('cronjobs.envio-whatsapp', compact('request','facturas','grupos_corte','totalFaltantes','empresa'));
+        return view('cronjobs.envio-whatsapp', compact('request','facturas','grupos_corte','totalFaltantes','empresa','sinTelefono'));
     }
 
     public function facturasWhastappSave(Request $request){

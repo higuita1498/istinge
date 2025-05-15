@@ -3084,13 +3084,19 @@ class CronController extends Controller
                 array_push($grupos_corte_array,$grupo->id);
             }
 
-         $facturas = Factura::
-            join('contracts as c','c.id','=','factura.contrato_id')
-            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',$fecha)
-            ->where('factura.whatsapp',0)
-            ->whereIn('c.grupo_corte',$grupos_corte_array)
+        $facturas = Factura::
+            join('contracts as c', 'c.id', '=', 'factura.contrato_id')
+            ->join('contactos as con', 'con.id', 'c.client_id')
+            ->where(function ($query) {
+                $query->whereNotNull('con.celular')
+                      ->orWhereNotNull('con.telefono1');
+            })
+            ->where('factura.fecha', $fecha)
+            ->where('factura.whatsapp', 0)
+            ->whereIn('c.grupo_corte', $grupos_corte_array)
             ->select('factura.*')
-            ->limit(45)->get();
+            ->limit(45)
+            ->get();
 
 
             foreach($facturas as $factura){
