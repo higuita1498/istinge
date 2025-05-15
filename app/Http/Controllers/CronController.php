@@ -1001,25 +1001,30 @@ class CronController extends Controller
                 'cs.state',
                 'f.contrato_id',
                 'gc.prorroga_tv', // Seleccionamos prorroga_tv
-                'gc.id as grupo_corte'
+                'gc.id as grupo_corte',
+                'contactos.updated_at'
             )
             ->where('f.estatus', 1)
             ->whereIn('f.tipo', [1, 2])
             ->where('contactos.status', 1)
             // ->where('cs.state', 'enabled') // Solo si aplica
-            ->whereIn('cs.grupo_corte', $grupos_corte_array)
             ->whereDate('f.vencimiento', '<=', now())
+            ->whereIn('cs.grupo_corte', $grupos_corte_array)
             ->where('cs.fecha_suspension', null)
             ->where('cs.state_olt_catv', true)
-            ->orderBy('f.id', 'desc')
+            ->orderBy('contactos.updated_at', 'asc')
             ->take(50)
-            ->get();
+            ->count();
 
             if($contactos){
+                $i=0;
                 foreach ($contactos as $contacto) {
 
                     //** Desarrollo nuevo:
                     //** Analizar la cantidad de facturas abiertas del contrato y el grupo de corte
+                    $contacto->updated_at = now();
+                    $contacto->save();
+
                     $grupo_corte = null;
                     $cant_fac_grupo_corte = 1;
                     $cantFacturasVencidas = 1;
@@ -1064,8 +1069,6 @@ class CronController extends Controller
                         ->value('id');
                     }
 
-                    //** Validacion nueva:
-                    ///** validamos que segun el grupo_corte la cantidad de facturas vencidas si sea igual
                     if($factura->id == $ultimaFacturaRegistrada && $cantFacturasVencidas >= $cant_fac_grupo_corte){
 
                     //1. debemos primero mirar si los contrsatos existen en la tabla detalle, si no hacemos el proceso antiguo
@@ -1105,7 +1108,6 @@ class CronController extends Controller
 
                                 if(isset($response->status) && $response->status == true){
                                     $contrato->state_olt_catv = false;
-                                    $contrato->state = 'disabled';
                                     $contrato->save();
                                 }
 
