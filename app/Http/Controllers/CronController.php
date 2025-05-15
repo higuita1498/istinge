@@ -3072,9 +3072,6 @@ class CronController extends Controller
             $empresa->save();
         }
 
-        //Validacion de ingresos creados y no habilitado el catv o internet
-        $this->refreshCorteIntertTV();
-
         $empresa = Empresa::Find(1);
 
         $grupos_corte = GrupoCorte::where('status', 1)->get();
@@ -3171,6 +3168,8 @@ class CronController extends Controller
             }
         }
         Log::info("Lote de facturas enviadas por whatsapp correctamente.");
+        //Validacion de ingresos creados y no habilitado el catv o internet
+        $this->refreshCorteIntertTV();
         }
     }
 
