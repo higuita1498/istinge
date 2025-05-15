@@ -950,7 +950,7 @@
 		        $titleswal = "¿Desea habilitar el chat IA?";
 		    }
 
-		    if ($("#factura_contrato_off").val() == 1) {
+		    if ($("#chat_ia").val() == 1) {
 		        $titleswal = "¿Desea deshabilitar el chat IA?";
 		    }
 
