@@ -515,6 +515,15 @@
                   </label>
               </div>
           </div>
+
+          <div class="col-md-3">
+            <div class="form-radio">
+                <label class="form-check-label" style="font-size: 13px;">
+                    <input type="radio" class="form-check-input" name="tipo_electronica" value="6">No habilitar contrato
+                    <i class="input-helper"></i>
+                </label>
+            </div>
+        </div>
       </div>
             <div class="row">
                 <div class="col-md-6">

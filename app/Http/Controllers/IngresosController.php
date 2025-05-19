@@ -567,141 +567,142 @@ class IngresosController extends Controller
                             $items->pago = $this->precision($request->precio[$key]);
                             $factura->estatus = 0;
                             $factura->save();
-                        }else{
-                            $items->pago=$this->precision($request->precio[$key]);
-                        }
-
-                        if ($this->precision($precio) == $this->precision($factura->porpagar())) {
-                            $factura->estatus = 0;
-                            $factura->save();
-
-                            CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
-
-                            $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
-                            foreach ($crms as $crm) {
-                                $crm->delete();
+                            }else{
+                                $items->pago=$this->precision($request->precio[$key]);
                             }
-                        }
 
-                        $items->save();
+                            if ($this->precision($precio) == $this->precision($factura->porpagar())) {
+                                $factura->estatus = 0;
+                                $factura->save();
 
-                        $contrato = Contrato::where('id',$factura->contrato_id)->first();
-                        if(!$contrato){
-                            $contrato = Contrato::join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
-                                ->where('fc.factura_id', $factura->id)
-                                ->select('contracts.*')
-                                ->first();
-                        }
+                                CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
 
-                        //store: prorrateo Aplicacion de posible
-                        if(isset($request->tipo_electronica) && $request->tipo_electronica == 4){
-                            $facturaInicio = 1; //Esta opcion me permite crear la factura con prorrateo desde le dia que se creo la factura
-                            $this->createFacturaProrrateo($contrato, $facturaInicio);
-                        }
-
-                        /* * * API MK * * */
-                        if(!$contrato){
-                            $db_contrato = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
-                            if($db_contrato){
-                                $contrato = Contrato::where('nro',$db_contrato->contrato_nro)->first();
+                                $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                                foreach ($crms as $crm) {
+                                    $crm->delete();
+                                }
                             }
-                        }
 
-                        $cliente = $factura->cliente();
+                            $items->save();
 
-                        if($contrato){
-                            $contrato->state = "enabled";
-                            $contrato->save();
-                        }
-                        if(!$contrato){
-                            $contrato = Contrato::where('client_id', $cliente->id)->first();
+                            $contrato = Contrato::where('id',$factura->contrato_id)->first();
+                            if(!$contrato){
+                                $contrato = Contrato::join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+                                    ->where('fc.factura_id', $factura->id)
+                                    ->select('contracts.*')
+                                    ->first();
+                            }
+
+                            //store: prorrateo Aplicacion de posible
+                            if(isset($request->tipo_electronica) && $request->tipo_electronica == 4){
+                                $facturaInicio = 1; //Esta opcion me permite crear la factura con prorrateo desde le dia que se creo la factura
+                                $this->createFacturaProrrateo($contrato, $facturaInicio);
+                            }
+
+                            if(isset($request->tipo_electronica) && $request->tipo_electronica != 6 || !isset($request->tipo_electronica)){
+                            /* * * API MK * * */
+                            if(!$contrato){
+                                $db_contrato = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
+                                if($db_contrato){
+                                    $contrato = Contrato::where('nro',$db_contrato->contrato_nro)->first();
+                                }
+                            }
+
+                            $cliente = $factura->cliente();
+
                             if($contrato){
                                 $contrato->state = "enabled";
                                 $contrato->save();
                             }
-                        }
-
-                        if($contrato){
-                            $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
-
-                            if ($asignacion) {
-                                $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
-                                $asignacion->cuotas_pendientes = $cuotas_pendientes;
-                                if ($cuotas_pendientes == 0) {
-                                    $asignacion->status = 1;
-                                }
-                                $asignacion->save();
-                            }
-
-                            if($contrato->server_configuration_id){
-                                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-
-                                $API = new RouterosAPI();
-                                $API->port = $mikrotik->puerto_api;
-
-                                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                                    $API->write('/ip/firewall/address-list/print', TRUE);
-                                    $ARRAYS = $API->read();
-
-                                    #ELIMINAMOS DE MOROSOS#
-                                    $API->write('/ip/firewall/address-list/print', false);
-                                    $API->write('?address='.$contrato->ip, false);
-                                    $API->write("?list=morosos",false);
-                                    $API->write('=.proplist=.id');
-                                    $ARRAYS = $API->read();
-
-                                    if(count($ARRAYS)>0){
-                                        $API->write('/ip/firewall/address-list/remove', false);
-                                        $API->write('=.id='.$ARRAYS[0]['.id']);
-                                        $READ = $API->read();
-                                    }
-                                    #ELIMINAMOS DE MOROSOS#
-
-                                    #AGREGAMOS A IP_AUTORIZADAS#
-                                    $API->comm("/ip/firewall/address-list/add", array(
-                                        "address" => $contrato->ip,
-                                        "list" => 'ips_autorizadas'
-                                        )
-                                    );
-                                    #AGREGAMOS A IP_AUTORIZADAS#
-
-                                    $API->disconnect();
-
-                                    $contrato->state = 'enabled';
+                            if(!$contrato){
+                                $contrato = Contrato::where('client_id', $cliente->id)->first();
+                                if($contrato){
+                                    $contrato->state = "enabled";
                                     $contrato->save();
                                 }
                             }
-                        }
-                        /* * * API MK * * */
 
-                        /* * * API CATV * * */
-                        if($contrato->olt_sn_mac != null && $empresa->adminOLT != null){
+                            if($contrato){
+                                $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
 
-                            $curl = curl_init();
-                            curl_setopt_array($curl, array(
-                                CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING => '',
-                                CURLOPT_MAXREDIRS => 10,
-                                CURLOPT_TIMEOUT => 0,
-                                CURLOPT_FOLLOWLOCATION => true,
-                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST => 'POST',
-                                CURLOPT_HTTPHEADER => array(
-                                    'X-token: '.$empresa->smartOLT
-                                ),
-                                ));
+                                if ($asignacion) {
+                                    $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                                    $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                                    if ($cuotas_pendientes == 0) {
+                                        $asignacion->status = 1;
+                                    }
+                                    $asignacion->save();
+                                }
 
-                            $response = curl_exec($curl);
-                            $response = json_decode($response);
+                                if($contrato->server_configuration_id){
+                                    $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
-                            if(isset($response->status) && $response->status == true){
-                                $contrato->state_olt_catv = 1;
-                                $contrato->save();
+                                    $API = new RouterosAPI();
+                                    $API->port = $mikrotik->puerto_api;
+
+                                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                        $API->write('/ip/firewall/address-list/print', TRUE);
+                                        $ARRAYS = $API->read();
+
+                                        #ELIMINAMOS DE MOROSOS#
+                                        $API->write('/ip/firewall/address-list/print', false);
+                                        $API->write('?address='.$contrato->ip, false);
+                                        $API->write("?list=morosos",false);
+                                        $API->write('=.proplist=.id');
+                                        $ARRAYS = $API->read();
+
+                                        if(count($ARRAYS)>0){
+                                            $API->write('/ip/firewall/address-list/remove', false);
+                                            $API->write('=.id='.$ARRAYS[0]['.id']);
+                                            $READ = $API->read();
+                                        }
+                                        #ELIMINAMOS DE MOROSOS#
+
+                                        #AGREGAMOS A IP_AUTORIZADAS#
+                                        $API->comm("/ip/firewall/address-list/add", array(
+                                            "address" => $contrato->ip,
+                                            "list" => 'ips_autorizadas'
+                                            )
+                                        );
+                                        #AGREGAMOS A IP_AUTORIZADAS#
+
+                                        $API->disconnect();
+
+                                        $contrato->state = 'enabled';
+                                        $contrato->save();
+                                    }
+                                }
                             }
-                        }
-                        /* * * API CATV * * */
+                            /* * * API MK * * */
 
+                            /* * * API CATV * * */
+                            if($contrato->olt_sn_mac != null && $empresa->adminOLT != null){
+
+                                $curl = curl_init();
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => '',
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => 'POST',
+                                    CURLOPT_HTTPHEADER => array(
+                                        'X-token: '.$empresa->smartOLT
+                                    ),
+                                    ));
+
+                                $response = curl_exec($curl);
+                                $response = json_decode($response);
+
+                                if(isset($response->status) && $response->status == true){
+                                    $contrato->state_olt_catv = 1;
+                                    $contrato->save();
+                                }
+                            }
+                            /* * * API CATV * * */
+                            }
                         }
                     }
                 } else { //Si el tipo de ingreso es de categorias
