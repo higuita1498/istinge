@@ -312,6 +312,7 @@ class CRMController extends Controller
         return view('crm.whatsapp2')->with(compact('instance'));
 
     }
+
     public function whatsappActions(Request $request){
 
          // Configura los datos para la API

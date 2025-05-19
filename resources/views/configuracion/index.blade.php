@@ -970,7 +970,7 @@
 		                method: 'post',
 		                data: { chat_ia: $("#chat_ia").val() },
 		                success: function (data) {
-		                    if (data.status == 200) {
+		                    if (data.success == true) {
 		                        Swal.fire({
 		                            type: 'success',
 		                            title: 'Chat IA habilitado correctamente',
