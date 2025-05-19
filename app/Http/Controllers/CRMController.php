@@ -264,7 +264,9 @@ class CRMController extends Controller
     public function whatsapp(Request $request, WapiService $wapiService)
     {
         $this->getAllPermissions(auth()->user()->id);
-        $instance = Instance::where('company_id', auth()->user()->empresa)->first();
+        $instance = Instance::where('company_id', auth()->user()->empresa)
+        ->where('type',1)
+        ->first();
         if(!$instance) {
             return view('crm.whatsapp')->with(compact('instance'));
         }
@@ -280,23 +282,34 @@ class CRMController extends Controller
 
         $getResponse = json_decode($response);
         $instance->status = $getResponse->data->status == "PAIRED" ? "PAIRED" : "UNPAIRED";
+        $instance->type = 1; //Es de CRM Whatsapp
         $instance->save();
         return view('crm.whatsapp')->with(compact('instance'));
     }
 
-    public function whatsapp2(Request $request){
-        $this->getAllPermissions(Auth::user()->id);
-        $instancia = DB::table("instancia")
-                            ->first();
+    public function whatsapp2(Request $request, WapiService $wapiService){
+        $this->getAllPermissions(auth()->user()->id);
+        $instance = Instance::where('company_id', auth()->user()->empresa)
+        ->where('type',2)
+        ->first();
+        if(!$instance) {
+            return view('crm.whatsapp2')->with(compact('instance'));
+        }
+        try {
+            $response = $wapiService->getInstance($instance->uuid);
+        } catch (ClientException $e) {
+            if($e->getResponse()->getStatusCode() === 404) {
+                return back()->withErrors([
+                    'instance_id' => 'Esta instancia no existe, valida el identificador con tu proveedor.'
+                ])->withInput($request->input());
+            }
+        }
 
-        if(is_null($instancia) || empty($instancia)){
-            return view("crm.whatsapp")->with(compact("instancia"));
-        }
-        if($instancia->status!=0){
-            $info = $this->getInfo();
-            return view("crm.whatsapp")->with(compact("instancia","info"));
-        }
-        return view("crm.whatsapp")->with(compact("instancia"));
+        $getResponse = json_decode($response);
+        $instance->status = $getResponse->data->status == "PAIRED" ? "PAIRED" : "UNPAIRED";
+        $instance->type = 2; //Es de CRM Whatsapp
+        $instance->save();
+        return view('crm.whatsapp2')->with(compact('instance'));
 
     }
     public function whatsappActions(Request $request){

@@ -2461,16 +2461,16 @@ function CrearFilaRetencion() {
         `<tr  id="reten${nro}">` +
         `
         <td  class="no-padding">
-          <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="retencion[]" id="retencion${nro}" required="" onchange="retencion_calculate(${nro}, this.value);" >
+        <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="retencion[]" id="retencion${nro}" required="" onchange="retencion_calculate(${nro}, this.value);" >
 
-          </select>
+        </select>
         </td>
         <td class="monetario">
-          <input type="hidden" value='0' id="lock_reten${nro}">
-          <input type="number" required="" style="display: inline-block; width: 80%;" class="form-control form-control-sm" maxlength="24" onkeyup="total_categorias()" id="precio_reten${nro}" name="precio_reten[]" placeholder="Valor retenido" onkeyup="total_linea(${nro})" required="" min="0">
+        <input type="hidden" value='0' id="lock_reten${nro}">
+        <input type="number" required="" style="display: inline-block; width: 80%;" class="form-control form-control-sm" maxlength="24" onkeyup="total_categorias()" id="precio_reten${nro}" name="precio_reten[]" placeholder="Valor retenido" onkeyup="total_linea(${nro})" required="" min="0">
         </td>
-      <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar('reten${nro}'); total_categorias();">X</button></td>
-    ` +
+        <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar('reten${nro}'); total_categorias();" style="color:#E13130">X</button></td>
+        ` +
         `</tr>`
     );
     var retenciones = JSON.parse($('#retenciones').val());
@@ -2482,7 +2482,7 @@ function CrearFilaRetencion() {
     });
     $('#retencion' + nro).selectpicker('refresh');
     $('.precio').mask('0000000000.00', { reverse: true });
-    $("#precio_reten" + nro).attr("disabled", "disabled");
+   // $("#precio_reten" + nro).attr("disabled", "disabled");
 }
 
 function CrearFilaFormaPago(categoria = false) {

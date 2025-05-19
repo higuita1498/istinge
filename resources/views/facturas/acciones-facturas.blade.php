@@ -33,13 +33,7 @@
 		@endif
 	@endif
 	@if($emailcliente)
-	    @if($estatus==1)
-            @if($correo==0)
-		        <a href="{{route('facturas.enviar',$id)}}" class="btn btn-outline-success btn-icons" title="Enviar"><i class="far fa-envelope"></i></a>
-	        @else
-		        <button class="btn btn-danger btn-icons disabled" title="Factura enviada por Correo"><i class="far fa-envelope"></i></button>
-	        @endif
-	    @endif
+		<a href="{{route('facturas.enviar',$id)}}" class="btn btn-outline-success btn-icons" title="Enviar"><i class="far fa-envelope"></i></a>
 	@endif
 	@if($celularcliente)
 	    @if($estatus==1)
