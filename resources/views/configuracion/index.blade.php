@@ -965,39 +965,50 @@
 		    }).then((result) => {
 		        if (result.value) {
 		            $.ajax({
-		                url: url,
-		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-		                method: 'post',
-		                data: { chat_ia: $("#chat_ia").val() },
-		                success: function (data) {
-		                    if (data.success == true) {
-		                        Swal.fire({
-		                            type: 'success',
-		                            title: 'Chat IA habilitado correctamente',
-		                            showConfirmButton: false,
-		                            timer: 5000
-		                        })
-		                        $("#chat_ia").val(1);
-		                    } else {
-		                        Swal.fire({
-		                            type: 'success',
-		                            title: 'Chat IA Deshabilitado correctamente',
-		                            showConfirmButton: false,
-		                            timer: 5000
-		                        })
-		                        $("#chat_ia").val(0);
-		                    }
-		                    setTimeout(function(){
-		                    	var a = document.createElement("a");
-		                    	a.href = window.location.pathname;
-		                    	a.click();
-		                    }, 1000);
-		                }
-		            });
+                        url: url,
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        method: 'post',
+                        data: { chat_ia: $("#chat_ia").val() },
+                        success: function (data) {
+                            if (data.success == true) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Chat IA habilitado correctamente',
+                                    showConfirmButton: false,
+                                    timer: 5000
+                                });
+                                $("#chat_ia").val(1);
+                            } else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Chat IA deshabilitado correctamente',
+                                    showConfirmButton: false,
+                                    timer: 5000
+                                });
+                                $("#chat_ia").val(0);
+                            }
+
+                            setTimeout(function(){
+                                var a = document.createElement("a");
+                                a.href = window.location.pathname;
+                                a.click();
+                            }, 1000);
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Error al procesar la solicitud',
+                                text: xhr.responseJSON?.message || 'Ocurrió un error inesperado.',
+                                showConfirmButton: true
+                            });
+                        }
+                    });
+
 
 		        }
 		    })
         }
+
 
         function storePeriodoFacturacion() {
             cargando(true);
