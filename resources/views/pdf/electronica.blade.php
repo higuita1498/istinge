@@ -171,8 +171,8 @@
         }
 
         .divheader-datosfact p, .divheader-nota p, .divheader-estadocuenta p{
-            margin-top: 5px;
-            margin-bottom: 5px;
+            margin-top: 4px;
+            margin-bottom: 4px;
         }
 
         .divheader-nota{
@@ -252,7 +252,7 @@
         }
 
         .margin-docpdf{
-            width:100%; position:relative; margin-bottom:7px;margin-top:7px;
+            width:100%; position:relative; margin-bottom:4px;margin-top:4px;
         }
 
         .qr-table td:first-child{
