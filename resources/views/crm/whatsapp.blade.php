@@ -118,6 +118,7 @@
                             name="instance_id" value="{{ old('instance_id') }}" placeholder="id de la instancia"
                             id="instance_id">
                     </span>
+                    <input type="hidden" name="type" value="1">
                     <button type="submit" style="width: 100%;" class="btn btn-primary">
                         Enviar
                     </button>

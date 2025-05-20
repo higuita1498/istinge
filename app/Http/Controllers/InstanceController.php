@@ -61,7 +61,8 @@ class InstanceController extends Controller
                 'addr' => $addr,
                 'api_key' => $responseInstance->channelId,
                 'uuid_whatsapp' => $responseInstance->uuid,
-                'status' => $responseInstance->status
+                'status' => $responseInstance->status,
+                'type' => $request->type
             ]);
             return back()->with([
                 'instance' => $instance,
