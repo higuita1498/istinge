@@ -3746,7 +3746,7 @@ class FacturasController extends Controller{
         if($empresa->formato_impresion == 1){
             $pdf = PDF::loadView('pdf.factura_multiple', compact('items', 'facturas', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso','empresa'));
         }else{
-            $pdf = PDF::loadView('pdf.factura', compact('items', 'facturas', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'));
+            $pdf = PDF::loadView('pdf.factura_estandar_multiple', compact('items', 'facturas', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'));
         }
         return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);
     }
