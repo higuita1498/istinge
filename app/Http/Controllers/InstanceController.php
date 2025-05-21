@@ -18,9 +18,10 @@ class InstanceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $instance = Instance::where('company_id', auth()->user()->empresa)->first();
+        $ia = $request->get("ia");
+        $instance = Instance::where('company_id', auth()->user()->empresa)->where("type", $ia ? 2 : 1)->first();
         return response()->json($instance);
     }
 

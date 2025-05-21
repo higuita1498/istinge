@@ -292,6 +292,7 @@ class CRMController extends Controller
         $instance = Instance::where('company_id', auth()->user()->empresa)
         ->where('type',2)
         ->first();
+
         if(!$instance) {
             return view('crm.whatsapp2')->with(compact('instance'));
         }
@@ -309,6 +310,7 @@ class CRMController extends Controller
         $instance->status = $getResponse->data->status == "PAIRED" ? "PAIRED" : "UNPAIRED";
         $instance->type = 2; //Es de CRM Whatsapp
         $instance->save();
+
         return view('crm.whatsapp2')->with(compact('instance'));
 
     }
