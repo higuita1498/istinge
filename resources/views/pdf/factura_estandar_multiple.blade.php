@@ -133,7 +133,7 @@
     margin-top: 2%;">
             <p class="medium">@if($factura->tipo == 1 && isset($codqr))Factura de Venta Electrónica @elseif($factura->tipo == 1) Factura de Venta @elseif($factura->tipo == 3) Cuenta de Cobro @endif</p>
             <h4 style="text-align: left; ">No. #{{$factura->codigo}}</h4>
-            <p class="small">{{$tipo}}</p>
+            <p class="small">{{$tipo[$factura->id]}}</p>
             <h4 style="text-align: left; ">{{Auth::user()->tipo_fac()}}</h4>
             @if($factura->ordencompra != null)
             <p class="small"># Orden Compra: {{$factura->ordencompra}}</p>
@@ -205,7 +205,7 @@
             </thead>
             <tbody>
                 @php $cont=0; @endphp
-                @foreach($items as $item)
+                @foreach($items[$key] as $item)
 
                 @php $cont++; @endphp
                     <tr>
@@ -265,7 +265,7 @@
                         @endif
                     @endforeach
                 @endif
-                @foreach($retenciones as $retencion)
+                @foreach($retenciones[$key] as $retencion)
 
                     <tr class="foot">
                         <td colspan="4" class="smalltd"></td>
@@ -285,7 +285,7 @@
     <p style="font-size:7px;margin-top:-20px;"><strong>cufe: </strong>{{$CUFEvr}}</p>
     @endif
 
-        <p style="text-align: justify;" class="small">{{$resolucion->resolucion}}</p>
+        <p style="text-align: justify;" class="small">{{$resolucion[$factura->id]['resolucion']}}</p>
     </div>
     <div style="width: 70%; margin-top: 1%">
         <p style="text-align: justify;" class="small">{{$factura->term_cond}}</p>
@@ -306,5 +306,7 @@
 
 
     <div id="watermark">{{$factura->estatus==2?'ANULADA':''}}</div>
+    <div style="page-break-after: always;"></div>
+
     @endforeach
 @endsection
