@@ -1194,6 +1194,7 @@ class Controller extends BaseController
                     }
 
                     $factura->estatus = 0;
+                    $contrato->status = 1;
                     $contrato->state = 'enabled';
 
                     $ingreso->save();
