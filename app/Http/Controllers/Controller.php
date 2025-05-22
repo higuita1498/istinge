@@ -1103,7 +1103,6 @@ class Controller extends BaseController
                 ,'contracts.nro')->
                 where('c.nit', $identificacion)->
                 where('f.estatus',1)->
-                where('contracts.status',1)->
                 groupBy('factura')->
                 get();
 
@@ -1122,7 +1121,6 @@ class Controller extends BaseController
                 where('c.nit', $identificacion)->
                 where('f.id',$facturaId)->
                 where('f.estatus',1)->
-                where('contracts.status',1)->
                 groupBy('factura')->
                 get();
 
