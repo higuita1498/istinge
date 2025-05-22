@@ -1271,7 +1271,7 @@ class InventarioController extends Controller{
         exit;
     }
 
-     public function importarFacturasXlsx(Request $request){
+    public function importarFacturasXlsx(Request $request){
 
         $empresa = Empresa::Find(1);
         $imagen = $request->file('archivo');
@@ -1289,72 +1289,48 @@ class InventarioController extends Controller{
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $lista = '';
 
-        //Validaciones
-        // for ($row = 4; $row <= $highestRow; $row++){
-        //     $request= (object) array();
-        //     $error= (object) array();
-        //     $nombre=$sheet->getCell("A".$row)->getValue();
-        //     if (empty($nombre)) {
-        //         break;
-        //     }
-        //     $request->ref=$sheet->getCell("B".$row)->getValue();
-        //     if (!$request->ref) {
-        //         $error->ref="El campo Referencia es obligatorio";
-        //     }else{
-        //         $cant =Inventario::where('ref', $request->ref)->where('empresa',$empresa->id)->count();
-        //         if ($cant>0) {
-        //             $error->ref='El código de referencia ya se encuentra registrado para otro producto';
-        //         }
-        //     }
-
-        //     if (count((array) $error)>0) {
-        //         $fila["error"]='FILA '.$row;
-        //         $error=(array) $error;
-        //         var_dump($error);
-        //         var_dump($fila);
-        //         array_unshift ( $error ,$fila);
-        //         $result=(object) $error;
-        //         //reenvia los errores
-        //         return back()->withErrors($result)->withInput();
-        //     }
-        // }
-
         //importacion de items
-        for ($row = 4; $row <= $highestRow; $row++){
+        //$highestRow
+        $item = Inventario::where('ref','MIGRACION')->first();
+        for ($row = 1; $row <= $highestRow; $row++){
 
-            $nombre=$sheet->getCell("A".$row)->getValue();
+            $saldo=round($sheet->getCell("G".$row)->getValue());
             $cedula=$sheet->getCell("B".$row)->getValue();
-            $saldo=$sheet->getCell("D".$row)->getValue();
-            $item = Inventario::where('ref','saldo-pendiente')->first();
+            $nro_contrato = $sheet->getCell("A".$row)->getValue();
+            $direccion = $sheet->getCell("L".$row)->getValue();
+            $estatus = $sheet->getCell("F".$row)->getValue();
 
             $contacto = Contacto::where('nit',$cedula)->first();
-            if($contacto) {
-                $contrato = Contrato::where('client_id',$contacto->id)->first();
-                if($contrato){
 
-                    if($contrato->grupo_corte == ""){
-                        $contrato->grupo_corte = 15;
-                        $contrato->save();
+            if($contacto){
+                $contrato = Contrato::where('client_id',$contacto->id)
+            ->where('nro',$nro_contrato)
+            ->first();
+
+            if($contacto && $contrato) {
+
+                if($contrato){
+                    if($estatus == 'ACTIVO'){
+                        $contrato->state = 'enabled';
+                    }else{
+                        $contrato->state = 'disabled';
                     }
-                    //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-                    $nro = NumeracionFactura::tipoNumeracion($contrato);
-                    $date_suspension = "2024-10-06";
+                    $contrato->save();
+                }
+
+                if($saldo > 0 && Factura::where('contrato_id',$contrato->id)->count() == 0){
+                     //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+                    $nro = NumeracionFactura::Find(3);
+                    $date_suspension = "2025-05-30";
                     $plazo=TerminosPago::where('dias', Funcion::diffDates($date_suspension, Carbon::now())+1)->first();
                     $tipo = 1; //1= normal, 2=Electrónica.
                     $electronica = Factura::booleanFacturaElectronica($contrato->client_id);
                     $grupo_corte = GrupoCorte::where('id',$contrato->grupo_corte)->first();
 
-                    if($contrato->facturacion == 3 && !$electronica){
-                        $tipo = 1;
-                        // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
-                    }elseif($contrato->facturacion == 3 && $electronica){
-                        $tipo = 2;
-                    }
-
                     $inicio = $nro->inicio;
 
                     // Validacion para que solo asigne numero consecutivo si no existe.
-                    while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+                     while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
                         $nro->save();
                         $inicio=$nro->inicio;
                         $nro->inicio += 1;
@@ -1376,7 +1352,7 @@ class InventarioController extends Controller{
                     $factura->facnotas      = $contrato->notas_fact;
                     $factura->empresa       = 1;
                     $factura->cliente       = $contrato->client_id;
-                    $factura->fecha         = "2024-09-25";
+                    $factura->fecha         = "2025-05-01";
                     $factura->tipo          = $tipo;
                     $factura->vencimiento   = $date_suspension;
                     $factura->suspension    = $date_suspension;
@@ -1417,8 +1393,12 @@ class InventarioController extends Controller{
 
                     $nro->save();
                 }
+
             }
             }
+
+        }
+                    return "ok";
 
             return redirect('empresa/inventario/importar')->with('success', 'Se ha cargado satisfactoriamente los productos');
     }
