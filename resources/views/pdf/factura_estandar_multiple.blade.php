@@ -124,6 +124,7 @@
                 {{Auth::user()->empresa()->telefono}}
                 @if(Auth::user()->empresa()->web)
                     <br>{{Auth::user()->empresa()->web}}
+
                 @endif
                 <br> <a href="mailto:{{Auth::user()->empresa()->email}}" target="_top">{{Auth::user()->empresa()->email}}</a>
             </p>
