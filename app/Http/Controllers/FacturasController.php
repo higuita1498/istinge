@@ -4711,7 +4711,7 @@ class FacturasController extends Controller{
             ->join('contactos as con', 'con.id', 'c.client_id')
             ->where(function ($query) {
                 $query->whereNull('con.celular')
-                      ->orWhereNull('con.telefono1');
+                      ->WhereNull('con.telefono1');
             })
             ->where('factura.fecha', $request->fecha)
             ->where('factura.whatsapp', 0)
