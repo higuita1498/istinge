@@ -689,6 +689,13 @@ class ContratosController extends Controller
                     if($contratoMk){
                         $nro_contrato = $contratoMk->nro + 1;
                     }
+
+                    $existe = Contrato::where('nro', $nro_contrato)->count();
+                    while ($existe > 0) {
+                        $nro_contrato++;
+                        $existe = Contrato::where('nro', $nro_contrato)->count();
+                    }
+
                 }else{
                     $nro_contrato = $nro->contrato;
 
@@ -1704,13 +1711,21 @@ class ContratosController extends Controller
                     //Validacion para cambiar todas las facturas_contratos de nro al nuevo ingresado
                     if($request->nro != $contrato->nro){
 
+                        $nro_contrato = $request->nro;
+                        $existe = Contrato::where('nro', $nro_contrato)->count();
+                        while ($existe > 0) {
+                            $nro_contrato++;
+                            $existe = Contrato::where('nro', $nro_contrato)->count();
+                        }
+
                         $factura_contratos = DB::table('facturas_contratos')->where('contrato_nro', $contrato->nro)->get();
                         foreach($factura_contratos as $factura_contrato){
                             DB::table('facturas_contratos')->where('id', $factura_contrato->id)->update([
                                 'contrato_nro' => $request->nro
                             ]);
                         }
-                        $contrato->nro                 = $request->nro;
+
+                        $contrato->nro                 = $nro_contrato;
                     }
 
                     if($request->rd_item_vencimiento){
