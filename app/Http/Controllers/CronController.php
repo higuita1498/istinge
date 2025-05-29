@@ -3279,7 +3279,7 @@ class CronController extends Controller
 
                 $facturaPDF = $this->getPdfFactura($factura->id);
                 $facturabase64 = base64_encode($facturaPDF);
-                $instance = Instance::where('company_id', $empresa->id)->first();
+                $instance = Instance::where('company_id', $empresa->id)->where('type',1)->first();
 
                 if(is_null($instance) || empty($instance)){
                     Log::error('Instancia no está creada.');
@@ -3299,7 +3299,14 @@ class CronController extends Controller
                     "file" => $facturabase64,
                 ];
                 $celular = null;
-                $celular = $contacto->celular != null ? $contacto->celular : $contacto->telefono1;
+                if($contacto->celular != null && strlen($contacto->celular) > 9){
+                    $celular = $contacto->celular;
+                }else if($contacto->telefono1 != null && strlen($contacto->celular) > 9){
+                    $celular = $contacto->telefono1;
+                }else if($contacto->telefono2 != null && strlen($contacto->celular) > 9){
+                    $celular = $contacto->telefono2;
+                }
+
                 if($celular != null){
 
                 $contact = [
