@@ -636,7 +636,7 @@
         <script src="{{asset('js/custom.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
         <script src="{{asset('js/dian.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
         <!--<script type="text/javascript" src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>-->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVzQ60oKcfkrLPOs8rwYzAd2zBR-WcNfI"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL1KlgUU3ml--hP_mhfOeCNkp1EJ-WAcs"></script>
         <script type="text/javascript" src="{{asset('js/locationpicker.jquery.js')}}"></script>
 
         <script src="//cdn.datatables.net/plug-ins/1.12.1/sorting/ip-address.js"></script>
