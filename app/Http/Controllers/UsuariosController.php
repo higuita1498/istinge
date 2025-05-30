@@ -154,8 +154,8 @@ class UsuariosController extends Controller
 
         //insercion de tabla detalle
         $servidorUsuario = DB::table('usuario_servidor');
+        $servidorUsuario->where('usuario_id',$usuario->id)->delete();
         if(isset($request->servidor)){
-            $servidorUsuario->where('usuario_id',$usuario->id)->delete();
             foreach ($request->servidor as $key => $servidor){
                 $servidorUsuario->insert(['usuario_id'=>$usuario->id, 'servidor_id'=>$servidor]);
             }
