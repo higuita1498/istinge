@@ -80,12 +80,7 @@
 
 <div style="width: 100%;">
     <div style="width: 20%; display: inline-block; vertical-align: top; text-align: center;">
-        @php
-        $logoPath = public_path('Empresas/Empresa'.$empresa->id.'/'.$empresa->logo);
-        $defaultLogoPath = public_path('images/Empresas/Empresa1/logo.png');
-        $finalLogoPath = file_exists($logoPath) ? $logoPath : $defaultLogoPath;
-        @endphp
-        <img src="{{ $finalLogoPath }}" alt="Logo" style="width: 100%;">
+        <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="Logo" style="width: 100%;">
     </div>
     <div style="width: 57%; text-align: center; display: inline-block;">
         <h4>{{$empresa->nombre}}</h4>
