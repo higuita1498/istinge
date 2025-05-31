@@ -25,6 +25,7 @@ use App\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use PHPMailer\PHPMailer\Exception;
+use PDF;
 
 class AsignacionMaterialController extends Controller
 {
@@ -354,141 +355,33 @@ class AsignacionMaterialController extends Controller
      */
     public function pdf($id)
     {
-        $material_asignado = AsignarMaterial::with(['items.material', 'tecnico'])->find($id);
+        /**
+         * toma en cuenta que para ver los mismos
+         * datos debemos hacer la misma consulta
+         **/
         $empresa = Auth::user()->empresaObj;
+        view()->share(['title' => 'Imprimir Asignación de Material']);
 
-        $pdf = new \FPDF('P', 'mm', 'Letter');
+        $asignacion = AsignarMaterial::with(['tecnico', 'materiales'])->findOrFail($id);
 
-        // Establecer márgenes iguales en ambos lados
-        $pdf->SetMargins(10, 10, 10);
-        $pdf->AddPage();
+        if ($asignacion) {
+            $items = ItemsAsignarMaterial::where('id_asignacion_material', $asignacion->id)
+                ->join('inventario', 'inventario.id', '=', 'items_asignar_materials.id_material')
+                ->select('items_asignar_materials.*', 'inventario.producto as nombre', 'inventario.descripcion')
+                ->get();
 
-        // Calcular el ancho disponible
-        $pageWidth = $pdf->GetPageWidth();
-        $contentWidth = $pageWidth - 20; // 20mm total margins (10mm each side)
+            $itemscount = $items->count();
 
-        // Logo y encabezado
-        $logo = public_path() . '/images/Empresas/Empresa' . Auth::user()->empresa . '/' . $empresa->logo;
-        if (file_exists($logo)) {
-            $pdf->Image($logo, 10, 10, 45);
+            $pdf = PDF::loadView('pdf.asignacion_material', compact('items', 'asignacion', 'itemscount', 'empresa'));
+
+            // Configurar el PDF
+            $pdf->setPaper('letter', 'portrait');
+
+            // Retornar el PDF para descarga
+            return response($pdf->stream('asignacion_material_' . $asignacion->referencia . '.pdf'))
+                ->withHeaders(['Content-Type' => 'application/pdf']);
         }
 
-        // Información de la empresa (centrada)
-        $pdf->SetY(10);
-        $pdf->SetFont('Arial', 'B', 14);
-        $pdf->Cell($contentWidth, 6, utf8_decode($empresa->nombre), 0, 1, 'C');
-
-        // Dividir la dirección en partes usando el guion como separador
-        $direccion_partes = explode('-', $empresa->direccion);
-
-        $pdf->SetFont('Arial', '', 9);
-        $pdf->Cell($contentWidth, 4, utf8_decode($empresa->tip_iden('mini') . ' ' . $empresa->nit . ($empresa->dv ? ' - ' . $empresa->dv : '')), 0, 1, 'C');
-
-        // Imprimir cada parte de la dirección en una nueva línea
-        foreach ($direccion_partes as $parte) {
-            $pdf->Cell($contentWidth, 4, utf8_decode(trim($parte)), 0, 1, 'C');
-        }
-
-        $pdf->Cell($contentWidth, 4, utf8_decode($empresa->telefono), 0, 1, 'C');
-        if ($empresa->web) {
-            $pdf->Cell($contentWidth, 4, utf8_decode($empresa->web), 0, 1, 'C');
-        }
-        $pdf->Cell($contentWidth, 4, utf8_decode($empresa->email), 0, 1, 'C');
-
-        // Título del documento
-        $pdf->Ln(5);
-        $pdf->SetFillColor(240, 240, 240);
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell($contentWidth, 8, utf8_decode('ASIGNACIÓN DE MATERIAL'), 0, 1, 'R');
-        $pdf->SetFont('Arial', 'B', 11);
-        $pdf->Cell($contentWidth, 6, utf8_decode('No. ' . $material_asignado->referencia), 0, 1, 'R');
-        $pdf->Ln(5);
-
-        // Información del técnico (tabla)
-        $pdf->SetFont('Arial', 'B', 9);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->SetDrawColor(180, 180, 180);
-
-        // Primera tabla con el mismo ancho que la tabla de materiales
-        $col1 = 30;
-        $col2 = ($contentWidth - $col1 - 50); // Ancho para el nombre/email
-        $col3 = 50; // Ancho para la fecha
-
-        // Primera fila
-        $pdf->Cell($col1, 7, utf8_decode('TÉCNICO:'), 1, 0, 'R', true);
-        $pdf->SetFont('Arial', '', 9);
-        $pdf->Cell($col2, 7, utf8_decode($material_asignado->tecnico->nombres), 1, 0, 'L');
-        $pdf->SetFont('Arial', 'B', 8);
-        $pdf->Cell($col3, 7, utf8_decode('FECHA DE EXPEDICIÓN'), 1, 1, 'C', true);
-
-        // Segunda fila
-        $pdf->SetFont('Arial', 'B', 9);
-        $pdf->Cell($col1, 7, utf8_decode('EMAIL:'), 1, 0, 'R', true);
-        $pdf->SetFont('Arial', '', 9);
-        $pdf->Cell($col2, 7, utf8_decode($material_asignado->tecnico->email), 1, 0, 'L');
-        $pdf->Cell($col3, 7, date('d/m/Y', strtotime($material_asignado->fecha)), 1, 1, 'C');
-
-        $pdf->Ln(5);
-
-        // Tabla de materiales
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->SetFont('Arial', 'B', 9);
-
-        // Usar el mismo ancho total que la tabla anterior
-        $col1 = $contentWidth * 0.5; // 50% para Material
-        $col2 = $contentWidth * 0.3; // 30% para Referencia
-        $col3 = $contentWidth * 0.2; // 20% para Cantidad
-
-        $pdf->Cell($col1, 8, 'Material', 1, 0, 'C', true);
-        $pdf->Cell($col2, 8, 'Referencia', 1, 0, 'C', true);
-        $pdf->Cell($col3, 8, 'Cantidad', 1, 1, 'C', true);
-
-        // Contenido de la tabla con colores alternados
-        $pdf->SetFont('Arial', '', 9);
-        $fill = false;
-        foreach ($material_asignado->items as $item) {
-            $pdf->SetFillColor(245, 245, 245);
-            $pdf->Cell($col1, 7, utf8_decode($item->material->producto), 1, 0, 'L', $fill);
-            $pdf->Cell($col2, 7, utf8_decode($item->material->ref), 1, 0, 'L', $fill);
-            $pdf->Cell($col3, 7, $item->cantidad, 1, 1, 'C', $fill);
-            $fill = !$fill;
-        }
-
-        // Notas con borde y fondo
-        if ($material_asignado->notas) {
-            $pdf->Ln(5);
-            $pdf->SetFillColor(245, 245, 245);
-            $pdf->SetFont('Arial', 'B', 9);
-            $pdf->Cell(30, 7, 'Notas:', 0);
-            $pdf->SetFont('Arial', '', 9);
-            $pdf->MultiCell($contentWidth - 30, 7, utf8_decode($material_asignado->notas), 1, 'L', true);
-        }
-
-        $pdf->Ln(20);
-
-        // Firmas con líneas más estilizadas
-        $pdf->SetDrawColor(100, 100, 100);
-        $pdf->SetFont('Arial', '', 9);
-
-        // Ajustar las posiciones de las líneas para que coincidan con el ancho de contenido
-        $leftMargin = 25;
-        $rightMargin = $pageWidth - 25;
-        $middlePoint = $pageWidth / 2;
-
-        $pdf->Line($leftMargin, $pdf->GetY(), $middlePoint - 15, $pdf->GetY());
-        $pdf->Line($middlePoint + 15, $pdf->GetY(), $rightMargin, $pdf->GetY());
-
-        $pdf->Ln(1);
-        $pdf->Cell($contentWidth / 2, 5, utf8_decode('Firma del Técnico'), 0, 0, 'C');
-        $pdf->Cell($contentWidth / 2, 5, utf8_decode('ACEPTADA, FIRMA Y/O SELLO Y FECHA'), 0, 1, 'C');
-
-        // Generar el PDF en memoria
-        $pdfContent = $pdf->Output('', 'S');
-
-        // Retornar la respuesta con los headers correctos
-        return response($pdfContent)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="Asignacion_Material_' . $material_asignado->referencia . '.pdf"')
-            ->header('Content-Length', strlen($pdfContent));
+        return redirect('empresa/asignacion_material')->with('error', 'No se encontró la asignación de material');
     }
 }
